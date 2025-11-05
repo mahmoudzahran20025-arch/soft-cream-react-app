@@ -4,6 +4,7 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  base: '/soft-cream-react-app/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -25,7 +26,7 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: './dist',
+    outDir: 'docs',
     emptyOutDir: true,
     rollupOptions: {
       output: {
