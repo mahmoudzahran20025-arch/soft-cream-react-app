@@ -31,13 +31,48 @@ const CheckoutModal = ({ isOpen, onClose, cart = [] }) => {
   const [submitError, setSubmitError] = useState(null);
   const [showLocationPermission, setShowLocationPermission] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
+  const [products, setProducts] = useState({});
+  const [productsLoading, setProductsLoading] = useState(true);
 
   // Fetch branches
   useEffect(() => {
     if (isOpen) {
       fetchBranches();
+      fetchProductDetails();
     }
-  }, [isOpen]);
+  }, [isOpen, cart]);
+
+  const fetchProductDetails = async () => {
+    if (cart.length === 0) {
+      setProductsLoading(false);
+      return;
+    }
+
+    setProductsLoading(true);
+    try {
+      const productIds = cart.map(item => item.productId);
+      const uniqueIds = [...new Set(productIds)];
+      
+      const productPromises = uniqueIds.map(async (id) => {
+        const response = await fetch(`${API_BASE_URL}?path=/products/${id}`);
+        const result = await response.json();
+        return { id, data: result.data };
+      });
+
+      const productResults = await Promise.all(productPromises);
+      const productsMap = {};
+      productResults.forEach(({ id, data }) => {
+        productsMap[id] = data;
+      });
+
+      setProducts(productsMap);
+      console.log('✅ Checkout: Product details loaded:', productsMap);
+    } catch (error) {
+      console.error('❌ Checkout: Failed to fetch product details:', error);
+    } finally {
+      setProductsLoading(false);
+    }
+  };
 
   const fetchBranches = async () => {
     setBranchesLoading(true);
@@ -142,7 +177,11 @@ const CheckoutModal = ({ isOpen, onClose, cart = [] }) => {
   };
 
   const calculateSubtotal = () => {
-    return cart.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
+    return cart.reduce((total, item) => {
+      const product = products[item.productId];
+      if (!product) return total;
+      return total + (product.price * item.quantity);
+    }, 0);
   };
 
   const calculateTotal = () => {
@@ -187,25 +226,68 @@ const CheckoutModal = ({ isOpen, onClose, cart = [] }) => {
         </div>
 
         {/* Order Summary */}
-        <div className="bg-gray-50 dark:bg-gray-700 rounded-2xl p-5 mb-6 border-2 border-gray-200 dark:border-gray-600">
-          <div className="flex items-center gap-2.5 text-base font-bold mb-4 pb-3 border-b-2">
-            <Receipt className="w-5 h-5" />
-            <span>{t('orderSummary') || 'ملخص الطلب'}</span>
+        <div className="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-5 mb-6 border-2 border-pink-100 dark:border-gray-600 shadow-sm">
+          <div className="flex items-center gap-2.5 text-base font-bold mb-4 pb-3 border-b-2 border-pink-200 dark:border-gray-500">
+            <Receipt className="w-5 h-5 text-primary" />
+            <span className="text-gray-800 dark:text-gray-100">{t('orderSummary') || 'ملخص الطلب'}</span>
           </div>
-          <div className="space-y-2">
-            {cart.map((item, index) => (
-              <div key={index} className="flex justify-between text-sm">
-                <span>{item.name || `Product ${item.productId}`} × {item.quantity}</span>
-                <span className="font-bold">{(item.price || 0) * item.quantity} ج.م</span>
-              </div>
-            ))}
-            <div className="border-t pt-2 mt-2">
-              <div className="flex justify-between text-lg font-bold">
-                <span>{t('total') || 'الإجمالي'}:</span>
-                <span className="text-primary">{total} ج.م</span>
+          {productsLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {cart.map((item, index) => {
+                const product = products[item.productId];
+                if (!product) return null;
+                const productName = currentLang === 'ar' ? product.name : product.nameEn;
+                const itemTotal = product.price * item.quantity;
+                
+                return (
+                  <div key={index} className="flex justify-between items-center text-sm bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm">
+                    <div className="flex items-center gap-2">
+                      <img 
+                        src={product.image} 
+                        alt={productName} 
+                        className="w-10 h-10 rounded-lg object-cover"
+                      />
+                      <div>
+                        <div className="font-semibold text-gray-800 dark:text-gray-100">{productName}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          {product.price} ج.م × {item.quantity}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="font-bold text-primary">{itemTotal.toFixed(2)} ج.م</span>
+                  </div>
+                );
+              })}
+              
+              {/* Subtotal */}
+              <div className="border-t-2 border-pink-200 dark:border-gray-500 pt-3 mt-3 space-y-2">
+                <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
+                  <span>{t('subtotal') || 'المجموع الفرعي'}:</span>
+                  <span className="font-semibold">{calculateSubtotal().toFixed(2)} ج.م</span>
+                </div>
+                {deliveryMethod === 'delivery' && (
+                  <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
+                    <span>{t('deliveryFee') || 'رسوم التوصيل'}:</span>
+                    <span className="font-semibold">15.00 ج.م</span>
+                  </div>
+                )}
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>{t('discount') || 'الخصم'}:</span>
+                    <span className="font-semibold">-{couponDiscount.toFixed(2)} ج.م</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-lg font-bold text-gray-800 dark:text-gray-100 pt-2 border-t border-pink-200 dark:border-gray-500">
+                  <span>{t('total') || 'الإجمالي'}:</span>
+                  <span className="text-primary text-xl">{total.toFixed(2)} ج.م</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Delivery Options */}
