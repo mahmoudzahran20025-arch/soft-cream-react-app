@@ -101,10 +101,12 @@ export const GlobalProvider = ({ children }) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('theme', newTheme);
       
-      // Update body class
+      // Update html and body class for Tailwind dark mode
       if (newTheme === 'dark') {
+        document.documentElement.classList.add('dark');
         document.body.classList.add('dark');
       } else {
+        document.documentElement.classList.remove('dark');
         document.body.classList.remove('dark');
       }
       
@@ -193,8 +195,10 @@ export const GlobalProvider = ({ children }) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
         document.body.classList.add('dark');
       } else {
+        document.documentElement.classList.remove('dark');
         document.body.classList.remove('dark');
       }
     }
