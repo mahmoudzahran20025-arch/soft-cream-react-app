@@ -1,0 +1,51 @@
+/* ========================================
+ * ⏳ LOADING SCREEN - CSS Module
+ * ✅ Isolated styles for LoadingScreen component
+ * ✅ Tailwind-first approach (simple styles in JSX)
+ * ======================================== */
+
+/* Spinner Animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Spinner */
+.spinner {
+  width: 4rem;
+  height: 4rem;
+  border: 4px solid rgba(147, 51, 234, 0.1);
+  border-top-color: #9333ea;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Dark mode spinner */
+.dark .spinner {
+  border-color: rgba(147, 51, 234, 0.2);
+  border-top-color: #a855f7;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Loading Screen Container */
+.loadingScreen {
+  animation: fadeIn 0.2s ease-in;
+}
+
+/* Performance Optimization */
+.loadingScreen {
+  will-change: opacity;
+}

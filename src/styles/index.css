@@ -1,0 +1,193 @@
+/* ✅ Internalized CSS - Self-Contained */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+ * CSS VARIABLES & BASE STYLES
+ * ======================================== */
+@layer base {
+  :root {
+    /* Layout Variables */
+    --sidebar-width: 320px;
+    
+    /* Z-Index System */
+    --z-base: 0;
+    --z-content: 10;
+    --z-carousel: 5;
+    --z-carousel-controls: 10;
+    --z-products: 2;
+    --z-product-hover: 3;
+    --z-sticky-categories: 90;
+    --z-dropdown: 50;
+    --z-header: 100;
+    --z-header-elements: 101;
+    --z-sidebar-overlay: 900;
+    --z-sidebar: 1000;
+    --z-modal-overlay: 8900;
+    --z-modal-base: 9000;
+    --z-modal-nested: 9100;
+    --z-modal-processing: 9200;
+    --z-modal-permission: 9300;
+    --z-modal-confirmed: 9400;
+    --z-modal-tracking: 9500;
+    --z-modal-close-btn: 9600;
+    --z-toast: 10000;
+    
+    /* Primary Colors */
+    --color-primary-50: #fef2f2;
+    --color-primary-100: #fee2e2;
+    --color-primary-200: #fecaca;
+    --color-primary-300: #fca5a5;
+    --color-primary-400: #f87171;
+    --color-primary-500: #ef4444;
+    --color-primary-600: #dc2626;
+    --color-primary-700: #b91c1c;
+    --color-primary-800: #991b1b;
+    --color-primary-900: #7f1d1d;
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      --sidebar-width: 300px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :root {
+      --sidebar-width: 280px;
+    }
+  }
+
+  /* Body Base Styles */
+  body {
+    @apply bg-cream-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 overflow-x-hidden transition-colors duration-300;
+  }
+
+  /* Accessibility */
+  :focus-visible {
+    @apply outline-none ring-4 ring-offset-2 ring-primary/50 rounded-md;
+  }
+
+  /* Scrollbars */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary rounded;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-dark;
+  }
+
+  /* Keyframe Animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+  @keyframes slideUp {
+    0% { transform: translateY(100%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes scaleIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 15px rgba(255, 107, 157, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(255, 107, 157, 0.6); }
+  }
+}
+
+/* Custom Scrollbar */
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .swiper-button-next {
+  left: 10px;
+  right: auto;
+}
+
+[dir="rtl"] .swiper-button-prev {
+  right: 10px;
+  left: auto;
+}
+
+/* Energy Badge Glow */
+.energy-badge-mental {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.energy-badge-physical {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+.energy-badge-balanced {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+/* Nutrition Card Hover Effect */
+.nutrition-card {
+  transition: all 0.3s ease;
+}
+
+.nutrition-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Product Card Animations */
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal Backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Loading Skeleton */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(
+    to right,
+    #f0f0f0 0%,
+    #e0e0e0 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-size: 1000px 100%;
+}
