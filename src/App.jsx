@@ -13,11 +13,13 @@ import Sidebar from './components/Sidebar';
 import ToastContainer from './components/Toast/ToastContainer';
 import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 import AnimatedBackground from './components/AnimatedBackground/AnimatedBackground';
-import { ShoppingCart, Menu } from 'lucide-react';
+import { ShoppingCart, Menu, Moon, Sun, Globe } from 'lucide-react';
+import { useGlobal } from './context/GlobalProvider';
 
 // ✅ Inner App Component (has access to ProductsContext + GlobalProvider)
 function AppContent() {
   const { cart, addToCart, getCartCount, loading } = useProducts();
+  const { theme, toggleTheme, language, toggleLanguage, t } = useGlobal();
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
@@ -89,7 +91,7 @@ function AppContent() {
         {/* Header */}
         <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
           <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               {/* Menu Button */}
               <button
                 onClick={() => setShowSidebar(true)}
@@ -99,7 +101,7 @@ function AppContent() {
                 <Menu className="w-6 h-6" />
               </button>
 
-              <div className="text-center">
+              <div className="text-center flex-1">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   🍦 Soft Cream
                 </h1>
@@ -108,19 +110,47 @@ function AppContent() {
                 </p>
               </div>
               
-              {/* Cart Button */}
-              <button
-                onClick={() => setShowCart(!showCart)}
-                className="relative p-3 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors shadow-lg"
-                aria-label="Open cart"
-              >
-                <ShoppingCart className="w-6 h-6" />
-                {cartItemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                    {cartItemsCount}
-                  </span>
-                )}
-              </button>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
+                {/* Dark Mode Toggle */}
+                <button
+                  onClick={toggleTheme}
+                  className="p-3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-lg"
+                  aria-label="Toggle theme"
+                  title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                >
+                  {theme === 'dark' ? (
+                    <Sun className="w-5 h-5" />
+                  ) : (
+                    <Moon className="w-5 h-5" />
+                  )}
+                </button>
+
+                {/* Language Toggle */}
+                <button
+                  onClick={toggleLanguage}
+                  className="p-3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-lg flex items-center gap-1"
+                  aria-label="Toggle language"
+                  title={language === 'ar' ? 'English' : 'العربية'}
+                >
+                  <Globe className="w-5 h-5" />
+                  <span className="text-xs font-bold">{language === 'ar' ? 'EN' : 'AR'}</span>
+                </button>
+
+                {/* Cart Button */}
+                <button
+                  onClick={() => setShowCart(!showCart)}
+                  className="relative p-3 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors shadow-lg"
+                  aria-label="Open cart"
+                >
+                  <ShoppingCart className="w-6 h-6" />
+                  {cartItemsCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                      {cartItemsCount}
+                    </span>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </header>
