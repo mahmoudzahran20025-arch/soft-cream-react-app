@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useProducts } from '../context/ProductsContext';
-import { X, ShoppingCart, Calculator, ShieldCheck, Truck, CheckCircle2, Minus, Plus, Trash2 } from 'lucide-react';
+import { X, ShoppingCart, Calculator, ShieldCheck, Truck, CheckCircle2, Minus, Plus, Trash2, Flame, Droplets, Wheat, Activity, Brain, Zap } from 'lucide-react';
 
 /**
  * CartModal Component - Pure React Cart Implementation
@@ -15,6 +15,8 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
   const [cart, setCart] = useState([]);
   const [products, setProducts] = useState({});
   const [loading, setLoading] = useState(true);
+  const [nutritionData, setNutritionData] = useState(null);
+  const [nutritionLoading, setNutritionLoading] = useState(false);
 
   // ✅ Load cart from sessionStorage on mount
   useEffect(() => {
@@ -81,6 +83,40 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
       console.log('✅ Cart saved to sessionStorage:', cart);
     }
   }, [cart, loading]);
+
+  // ✅ Fetch nutrition summary from backend
+  useEffect(() => {
+    if (cart.length === 0) {
+      setNutritionData(null);
+      return;
+    }
+
+    const fetchNutrition = async () => {
+      setNutritionLoading(true);
+      try {
+        const productIds = cart.map(item => item.productId);
+        const response = await fetch(
+          'https://softcream-api.mahmoud-zahran20025.workers.dev?path=/products/nutrition-summary',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productIds })
+          }
+        );
+        const result = await response.json();
+        if (result.success && result.data) {
+          setNutritionData(result.data);
+          console.log('✅ Nutrition data loaded:', result.data);
+        }
+      } catch (error) {
+        console.error('❌ Failed to fetch nutrition:', error);
+      } finally {
+        setNutritionLoading(false);
+      }
+    };
+
+    fetchNutrition();
+  }, [cart]);
 
   // ========================================
   // Cart Operations
@@ -310,6 +346,99 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
             </div>
           )}
         </div>
+
+        {/* Nutrition Summary */}
+        {!isEmpty && nutritionData && (
+          <div className="px-5 py-4 bg-gradient-to-br from-orange-50 to-pink-50 dark:from-gray-700 dark:to-gray-600 border-y border-orange-100 dark:border-gray-600">
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+              <Flame className="w-5 h-5 text-orange-500" />
+              {currentLang === 'ar' ? 'ملخص التغذية' : 'Nutrition Summary'}
+            </h3>
+            
+            {/* Macros Grid */}
+            <div className="grid grid-cols-4 gap-2 mb-3">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-3 text-center shadow-sm">
+                <Flame className="w-5 h-5 text-orange-500 mx-auto mb-1" />
+                <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  {nutritionData.totalCalories || 0}
+                </div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">
+                  {currentLang === 'ar' ? 'سعرات' : 'calories'}
+                </div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-3 text-center shadow-sm">
+                <Droplets className="w-5 h-5 text-blue-500 mx-auto mb-1" />
+                <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  {(nutritionData.totalProtein || 0).toFixed(1)}g
+                </div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">
+                  {currentLang === 'ar' ? 'بروتين' : 'protein'}
+                </div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-3 text-center shadow-sm">
+                <Wheat className="w-5 h-5 text-yellow-600 mx-auto mb-1" />
+                <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  {(nutritionData.totalCarbs || 0).toFixed(1)}g
+                </div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">
+                  {currentLang === 'ar' ? 'كربوهيدرات' : 'carbs'}
+                </div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-3 text-center shadow-sm">
+                <Activity className="w-5 h-5 text-red-500 mx-auto mb-1" />
+                <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  {(nutritionData.totalFat || 0).toFixed(1)}g
+                </div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">
+                  {currentLang === 'ar' ? 'دهون' : 'fat'}
+                </div>
+              </div>
+            </div>
+
+            {/* Energy Breakdown */}
+            {(nutritionData.mentalEnergy > 0 || nutritionData.physicalEnergy > 0 || nutritionData.balancedEnergy > 0) && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-3 space-y-2 shadow-sm">
+                <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-yellow-500" />
+                  {currentLang === 'ar' ? 'توزيع الطاقة' : 'Energy Distribution'}
+                </h4>
+                {nutritionData.mentalEnergy > 0 && (
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <Brain className="w-4 h-4 text-purple-600" />
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {currentLang === 'ar' ? 'ذهنية' : 'Mental'}
+                      </span>
+                    </div>
+                    <span className="font-bold text-purple-600">{nutritionData.mentalEnergy}</span>
+                  </div>
+                )}
+                {nutritionData.physicalEnergy > 0 && (
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <Activity className="w-4 h-4 text-orange-600" />
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {currentLang === 'ar' ? 'بدنية' : 'Physical'}
+                      </span>
+                    </div>
+                    <span className="font-bold text-orange-600">{nutritionData.physicalEnergy}</span>
+                  </div>
+                )}
+                {nutritionData.balancedEnergy > 0 && (
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-green-600" />
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {currentLang === 'ar' ? 'متوازنة' : 'Balanced'}
+                      </span>
+                    </div>
+                    <span className="font-bold text-green-600">{nutritionData.balancedEnergy}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Footer (Total & Checkout) */}
         {!isEmpty && (
