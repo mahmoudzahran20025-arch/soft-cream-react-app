@@ -52,6 +52,7 @@ const SLIDES_DATA = [
 
 const FeaturedSwiper = () => {
   const swiperRef = useRef(null);
+  const paginationRef = useRef(null); // ✅ Custom pagination element
   const [isMounted, setIsMounted] = useState(false);
   const [loadedImages, setLoadedImages] = useState(new Set([1, 2]));
 
@@ -118,6 +119,7 @@ const FeaturedSwiper = () => {
     },
     
     pagination: {
+      el: '.custom-pagination', // ✅ Use custom element outside Swiper
       clickable: true,
       dynamicBullets: false,
     },
@@ -215,7 +217,8 @@ const FeaturedSwiper = () => {
       style={{
         // ✅ CRITICAL: Set explicit height for Swiper container
         // This ensures aspect-ratio works correctly
-        minHeight: 'clamp(280px, 60vw, 500px)',
+        // Mobile: ~220px, Tablet: ~300px, Desktop: ~350px
+        minHeight: 'clamp(220px, 50vw, 350px)',
       }}
     >
       <Swiper
@@ -300,6 +303,9 @@ const FeaturedSwiper = () => {
         })}
       </Swiper>
 
+      {/* ✅ Custom Pagination Element - Outside Swiper */}
+      <div className="custom-pagination" ref={paginationRef}></div>
+
       {/* Custom Styles */}
       <style jsx>{`
         @keyframes shimmer {
@@ -345,50 +351,55 @@ const FeaturedSwiper = () => {
           font-weight: bold;
         }
 
-        /* Pagination */
-        .featured-swiper :global(.swiper-pagination) {
-          position: relative !important;
-          bottom: auto !important;
+        /* Custom Pagination - Outside Swiper wrapper */
+        .custom-pagination {
+          position: relative;
+          width: 100%;
           margin-top: 1rem;
           height: 32px;
           display: flex;
+          flex-direction: row;
           align-items: center;
           justify-content: center;
+          gap: 8px;
         }
 
-        .featured-swiper :global(.swiper-pagination-bullet) {
+        .custom-pagination :global(.swiper-pagination-bullet) {
           width: 8px;
           height: 8px;
           border-radius: 50%;
           transition: all 0.3s ease;
+          background: var(--swiper-pagination-bullet-inactive-color, #ff6b9d);
+          opacity: var(--swiper-pagination-bullet-inactive-opacity, 0.25);
         }
 
-        .featured-swiper :global(.swiper-pagination-bullet-active) {
+        .custom-pagination :global(.swiper-pagination-bullet-active) {
           width: 12px;
           height: 12px;
-          transform: scale(2);
+          transform: scale(1.5);
+          background: var(--swiper-pagination-color, #ff6b9d);
+          opacity: 1;
         }
 
         /* Mobile Specific */
         @media (max-width: 767px) {
-          .featured-swiper :global(.swiper-pagination) {
+          .custom-pagination {
             margin-top: 0.5rem;
             height: 24px;
             padding: 4px 8px;
             background: rgba(255, 255, 255, 0.08);
             border-radius: 8px;
-            gap: 2px;
+            gap: 4px;
           }
 
-          .featured-swiper :global(.swiper-pagination-bullet) {
+          .custom-pagination :global(.swiper-pagination-bullet) {
+            width: 6px;
+            height: 6px;
+          }
+
+          .custom-pagination :global(.swiper-pagination-bullet-active) {
             width: 8px;
             height: 8px;
-            margin: 0 1px;
-          }
-
-          .featured-swiper :global(.swiper-pagination-bullet-active) {
-            width: 10px;
-            height: 10px;
             transform: scale(1.2);
           }
         }
