@@ -210,7 +210,6 @@ const FeaturedSwiper = () => {
   return (
     <div 
       className="featured-swiper-container w-full"
-      style={{ minHeight: '220px' }}
       dir="ltr"
     >
       <Swiper
@@ -231,24 +230,25 @@ const FeaturedSwiper = () => {
             <SwiperSlide 
               key={slide.id}
               className="elementor-repeater-item-c8a489e"
-              style={{
-                position: 'relative',
-                width: '100%',
-                paddingTop: '75%', // 4:3 aspect ratio
-                height: 0,
-                overflow: 'hidden'
-              }}
             >
-              <div 
-                className="swiper-slide-inner"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                }}
-              >
+              {/* Wrapper for padding-top hack */}
+              <div style={{ 
+                position: 'relative',
+                width: '100%', 
+                paddingTop: '75%',  // 4:3 aspect ratio
+              }}>
+                <div 
+                  className="swiper-slide-inner"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: '1rem',
+                    overflow: 'hidden',
+                  }}
+                >
                   {isLoaded ? (
                     <>
                       <div
@@ -292,6 +292,7 @@ const FeaturedSwiper = () => {
                   
                   <div className="swiper-slide-contents" />
                 </div>
+              </div>
             </SwiperSlide>
           );
         })}
@@ -310,21 +311,12 @@ const FeaturedSwiper = () => {
 
         .featured-swiper {
           width: 100%;
-          height: 100%;
+          display: block;
         }
 
         .featured-swiper .swiper-slide {
           border-radius: 1rem;
           transition: all 0.3s ease;
-        }
-
-        .featured-swiper .swiper-slide-inner {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
         }
 
         /* Navigation Buttons */
