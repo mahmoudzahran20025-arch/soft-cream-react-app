@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
 import { useGlobal } from '../context/GlobalProvider';
+import styles from './MarqueeSwiper.module.css';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -11,6 +12,7 @@ import 'swiper/css';
  * 
  * ✅ Replaces: js/swiper-marquee.js
  * ✅ Features: Auto-scrolling text marquee with i18n support
+ * ✅ CSS Module: Isolated styling
  */
 
 const MarqueeSwiper = () => {
@@ -62,8 +64,7 @@ const MarqueeSwiper = () => {
 
   return (
     <div 
-      className="marquee-swiper-container w-full"
-      style={{ height: '52px', minHeight: '52px', maxHeight: '52px' }}
+      className={styles.marqueeContainer}
       dir="ltr" // Always LTR for smooth scrolling
     >
       <Swiper
@@ -84,7 +85,7 @@ const MarqueeSwiper = () => {
         centeredSlides={false}
         allowTouchMove={false}
         simulateTouch={false}
-        className="marquee-swiper h-full"
+        className={styles.marqueeSwiper}
       >
         {messages.map((message) => (
           <SwiperSlide key={message.id} className="!w-auto">
@@ -119,22 +120,6 @@ const MarqueeSwiper = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-
-      {/* Custom Styles */}
-      <style jsx>{`
-        .marquee-swiper {
-          width: 100%;
-          height: 100%;
-        }
-
-        .marquee-swiper .swiper-wrapper {
-          transition-timing-function: linear !important;
-        }
-
-        .marquee-swiper .swiper-slide {
-          width: auto !important;
-        }
-      `}</style>
     </div>
   );
 };

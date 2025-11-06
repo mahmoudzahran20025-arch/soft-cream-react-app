@@ -165,7 +165,21 @@ export const translationsData = {
     "footerAddressLabel": "العنوان",
     "footerAddressText": "شارع 9، المعادي، القاهرة، مصر",
     "footerCopyright": "© 2024 سوفت كريم. جميع الحقوق محفوظة.",
-    "footerMadeWith": "صُنع بـ ❤️ في مصر"
+    "footerMadeWith": "صُنع بـ ❤️ في مصر",
+    
+    // Trust Banner
+    "trustBannerTitle": "منتجات طبيعية معتمدة",
+    "trustBannerDescription": "جميع منتجاتنا خالية من المواد الحافظة والألوان الصناعية",
+    
+    // Marquee
+    "marqueeCaramelOfferTitle": "عرض الكراميل:",
+    "marqueeCaramelOfferText": "اطلب آيس كريم فانيليا واحصل على صوص كراميل مجاناً",
+    "marqueeNaturalTitle": "مكونات طبيعية:",
+    "marqueeNaturalText": "جميع منتجاتنا من مكونات طبيعية 100%",
+    "marqueeDeliveryTitle": "توصيل سريع:",
+    "marqueeDeliveryText": "نوصل لك خلال 30 دقيقة في جميع أنحاء المدينة",
+    "marqueeEnergyTitle": "طاقة ذكية:",
+    "marqueeEnergyText": "آيس كريم بروتين عالي للرياضيين"
   },
   "en": {
     "headerTitle": "Soft Cream",
@@ -327,6 +341,20 @@ export const translationsData = {
     "footerAddressLabel": "Address",
     "footerAddressText": "9 St, Maadi, Cairo, Egypt",
     "footerCopyright": "© 2024 Soft Cream. All rights reserved.",
-    "footerMadeWith": "Made with ❤️ in Egypt"
+    "footerMadeWith": "Made with ❤️ in Egypt",
+    
+    // Trust Banner
+    "trustBannerTitle": "Certified Natural Products",
+    "trustBannerDescription": "All our products are free from preservatives and artificial colors",
+    
+    // Marquee
+    "marqueeCaramelOfferTitle": "Caramel Offer:",
+    "marqueeCaramelOfferText": "Order vanilla ice cream and get free caramel sauce",
+    "marqueeNaturalTitle": "Natural Ingredients:",
+    "marqueeNaturalText": "All our products are made from 100% natural ingredients",
+    "marqueeDeliveryTitle": "Fast Delivery:",
+    "marqueeDeliveryText": "We deliver within 30 minutes anywhere in the city",
+    "marqueeEnergyTitle": "Smart Energy:",
+    "marqueeEnergyText": "High protein ice cream for athletes"
   }
 };

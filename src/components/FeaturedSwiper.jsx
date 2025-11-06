@@ -80,6 +80,14 @@ const FeaturedSwiper = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // 🔴 إجبار Swiper على التحديث عند تحميل الصور
+  useEffect(() => {
+    if (swiperRef.current && swiperRef.current.swiper) {
+      console.log('🔄 Images loaded state changed, updating Swiper instance...');
+      swiperRef.current.swiper.update();
+    }
+  }, [loadedImages]);
+
   // ✅ Swiper configuration
   const swiperConfig = {
     modules: [Navigation, Pagination, Autoplay],

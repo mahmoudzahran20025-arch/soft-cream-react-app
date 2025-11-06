@@ -7,6 +7,7 @@ import NutritionSummary from './components/NutritionSummary';
 import FilterBar from './components/FilterBar';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import TrustBanner from './components/TrustBanner';
 import CartModal from './components/CartModal';
 import CheckoutModal from './components/CheckoutModal';
 import OrdersBadge from './components/CheckoutModal/OrdersBadge';
@@ -66,6 +67,11 @@ function AppContent() {
         {/* Marquee Swiper - ✅ Pure React Component */}
         <section className="w-full">
           <MarqueeSwiper />
+        </section>
+
+        {/* Trust Banner - ✅ Pure React Component */}
+        <section className="w-full">
+          <TrustBanner />
         </section>
 
         {/* Filter Bar */}

@@ -1,0 +1,35 @@
+/* MarqueeSwiper.module.css - Isolated styles for MarqueeSwiper */
+
+.marqueeContainer {
+  height: 52px;
+  min-height: 52px;
+  max-height: 52px;
+  width: 100%;
+  background: linear-gradient(to right, #fdf2f8, #fce7f3);
+  border-bottom: 1px solid #fbcfe8;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Dark mode support */
+:global(.dark) .marqueeContainer {
+  background: linear-gradient(to right, #1f2937, #111827);
+  border-bottom: 1px solid #374151;
+}
+
+.marqueeSwiper {
+  height: 100%;
+  width: 100%;
+}
+
+.marqueeSwiper :global(.swiper-wrapper) {
+  transition-timing-function: linear !important;
+  align-items: center;
+}
+
+.marqueeSwiper :global(.swiper-slide) {
+  width: auto !important;
+  height: 52px;
+  display: flex;
+  align-items: center;
+}
