@@ -120,7 +120,7 @@ const FeaturedSwiper = () => {
     },
     
     pagination: {
-      el: paginationRef.current, // ✅ Use ref to custom element outside Swiper
+      el: '.featured-pagination-dots', // ✅ Use unique selector (ref is null at config creation)
       clickable: true,
       dynamicBullets: false,
     },
@@ -276,19 +276,7 @@ const FeaturedSwiper = () => {
                       )}
                     </>
                   ) : (
-                    <div
-                      className="skeleton-shimmer"
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
-                        backgroundSize: '200% 100%',
-                        animation: 'shimmer 1.5s infinite',
-                      }}
-                    />
+                    <div className={styles.skeletonShimmer} />
                   )}
                   
                   <div className="swiper-slide-contents" />
@@ -299,7 +287,10 @@ const FeaturedSwiper = () => {
       </Swiper>
 
       {/* ✅ Custom Pagination Element - Outside Swiper */}
-      <div className={styles.customPagination} ref={paginationRef}></div>
+      <div 
+        className={`${styles.customPagination} featured-pagination-dots`}
+        ref={paginationRef}
+      ></div>
     </div>
   );
 };
