@@ -55,43 +55,10 @@ const FeaturedSwiper = () => {
   const swiperRef = useRef(null);
   const paginationRef = useRef(null); // ✅ Custom pagination element
   const [isMounted, setIsMounted] = useState(false);
-  const [loadedImages, setLoadedImages] = useState(new Set([1, 2, 3, 4, 5, 6, 7, 8])); // ✅ Load all images immediately
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (!isMounted) return;
-
-    const loadRemainingImages = () => {
-      SLIDES_DATA.slice(2).forEach((slide) => {
-        const img = new Image();
-        img.onload = () => {
-          setLoadedImages(prev => {
-            const updated = new Set(prev);
-            updated.add(slide.id);
-            console.log(`✅ Image ${slide.id} loaded`);
-            return updated;
-          });
-        };
-        img.onerror = () => {
-          console.warn(`⚠️ Failed to load image ${slide.id}`);
-        };
-        img.src = slide.image;
-      });
-    };
-
-    const timer = setTimeout(loadRemainingImages, 100);
-    return () => clearTimeout(timer);
-  }, [isMounted]);
-
-  useEffect(() => {
-    if (swiperRef.current?.swiper && loadedImages.size > 2) {
-      console.log(`🔄 Updating Swiper (${loadedImages.size}/8 images loaded)`);
-      swiperRef.current.swiper.update();
-    }
-  }, [loadedImages]);
 
   if (!isMounted) {
     return (
@@ -229,10 +196,7 @@ const FeaturedSwiper = () => {
           height: '100%', // ✅ Take full container height
         }}
       >
-        {SLIDES_DATA.map((slide) => {
-          const isLoaded = loadedImages.has(slide.id);
-          
-          return (
+        {SLIDES_DATA.map((slide) => (
             <SwiperSlide 
               key={slide.id}
               className="elementor-repeater-item-c8a489e"
@@ -251,40 +215,32 @@ const FeaturedSwiper = () => {
                   overflow: 'hidden',
                 }}
               >
-                  {isLoaded ? (
-                    <>
-                      <div
-                        className="swiper-slide-bg"
-                        style={{
-                          backgroundImage: `url(${slide.image})`,
-                          backgroundColor: '#FFF5EE',
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                        }}
-                      />
-                      {slide.priority === 'high' && (
-                        <link
-                          rel="preload"
-                          as="image"
-                          href={slide.image}
-                          fetchpriority="high"
-                        />
-                      )}
-                    </>
-                  ) : (
-                    <div className={styles.skeletonShimmer} />
-                  )}
-                  
-                  <div className="swiper-slide-contents" />
-                </div>
+                <div
+                  className="swiper-slide-bg"
+                  style={{
+                    backgroundImage: `url(${slide.image})`,
+                    backgroundColor: '#FFF5EE',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                  }}
+                />
+                {slide.priority === 'high' && (
+                  <link
+                    rel="preload"
+                    as="image"
+                    href={slide.image}
+                    fetchpriority="high"
+                  />
+                )}
+                <div className="swiper-slide-contents" />
+              </div>
             </SwiperSlide>
-          );
-        })}
+          ))}
       </Swiper>
 
       {/* ✅ Custom Pagination Element - Outside Swiper */}

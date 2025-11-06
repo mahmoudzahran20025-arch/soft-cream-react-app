@@ -119,19 +119,22 @@
   bottom: auto !important;
   left: auto !important;
   right: auto !important;
+  /* ✅ ISOLATION: Prevent any external styles */
+  z-index: 10 !important;
 }
 
-/* ✅ HYPER-SPECIFIC: Target only FeaturedSwiper pagination */
-.featuredSwiperContainer .customPagination :global(.swiper-pagination-bullet) {
+/* ✅ NUCLEAR OPTION: Maximum specificity for FeaturedSwiper only */
+div.customPagination.featured-pagination-dots :global(.swiper-pagination-bullet) {
   width: 8px !important;
   height: 8px !important;
   border-radius: 50% !important;
   transition: all 0.3s ease !important;
   background: var(--swiper-pagination-bullet-inactive-color, #ff6b9d) !important;
   opacity: var(--swiper-pagination-bullet-inactive-opacity, 0.25) !important;
+  margin: 0 4px !important;
 }
 
-.featuredSwiperContainer .customPagination :global(.swiper-pagination-bullet-active) {
+div.customPagination.featured-pagination-dots :global(.swiper-pagination-bullet-active) {
   width: 12px !important;
   height: 12px !important;
   transform: scale(1.5) !important;
