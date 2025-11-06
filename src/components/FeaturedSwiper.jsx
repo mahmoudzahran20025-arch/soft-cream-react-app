@@ -212,6 +212,11 @@ const FeaturedSwiper = () => {
     <div 
       className="featured-swiper-container w-full"
       dir="ltr"
+      style={{
+        // ✅ CRITICAL: Set explicit height for Swiper container
+        // This ensures aspect-ratio works correctly
+        minHeight: 'clamp(280px, 60vw, 500px)',
+      }}
     >
       <Swiper
         {...swiperConfig}
@@ -222,6 +227,7 @@ const FeaturedSwiper = () => {
           '--swiper-pagination-color': '#ff6b9d',
           '--swiper-pagination-bullet-inactive-color': '#ff6b9d',
           '--swiper-pagination-bullet-inactive-opacity': '0.25',
+          height: '100%', // ✅ Take full container height
         }}
       >
         {SLIDES_DATA.map((slide) => {
@@ -308,37 +314,11 @@ const FeaturedSwiper = () => {
         .featured-swiper {
           width: 100%;
           display: block;
-          min-height: 280px; /* Fallback for small screens */
         }
 
         .featured-swiper .swiper-slide {
           border-radius: 1rem;
           transition: all 0.3s ease;
-        }
-        
-        /* Responsive min-heights based on viewport */
-        @media (min-width: 480px) {
-          .featured-swiper {
-            min-height: 320px;
-          }
-        }
-        
-        @media (min-width: 768px) {
-          .featured-swiper {
-            min-height: 280px;
-          }
-        }
-        
-        @media (min-width: 1024px) {
-          .featured-swiper {
-            min-height: 320px;
-          }
-        }
-        
-        @media (min-width: 1440px) {
-          .featured-swiper {
-            min-height: 360px;
-          }
         }
 
         /* Navigation Buttons */
