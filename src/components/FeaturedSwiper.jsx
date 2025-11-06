@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import styles from './FeaturedSwiper.module.css';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -95,7 +96,7 @@ const FeaturedSwiper = () => {
   if (!isMounted) {
     return (
       <div 
-        className="featured-swiper-container w-full"
+        className={`${styles.featuredSwiperContainer} w-full`}
         style={{ minHeight: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
         <div className="animate-pulse text-gray-400">Loading slides...</div>
@@ -119,7 +120,7 @@ const FeaturedSwiper = () => {
     },
     
     pagination: {
-      el: '.custom-pagination', // ✅ Use custom element outside Swiper
+      el: paginationRef.current, // ✅ Use ref to custom element outside Swiper
       clickable: true,
       dynamicBullets: false,
     },
@@ -212,14 +213,13 @@ const FeaturedSwiper = () => {
 
   return (
     <div 
-      className="featured-swiper-container w-full"
+      className={`${styles.featuredSwiperContainer} w-full`}
       dir="ltr"
-      style={{}}
     >
       <Swiper
         {...swiperConfig}
         ref={swiperRef}
-        className="featured-swiper swiper-ready"
+        className={`${styles.featuredSwiper} swiper-ready`}
         style={{
           '--swiper-navigation-color': '#ff6b9d',
           '--swiper-pagination-color': '#ff6b9d',
@@ -299,145 +299,7 @@ const FeaturedSwiper = () => {
       </Swiper>
 
       {/* ✅ Custom Pagination Element - Outside Swiper */}
-      <div className="custom-pagination" ref={paginationRef}></div>
-
-      {/* Custom Styles */}
-      <style jsx>{`
-        @keyframes shimmer {
-          0% {
-            background-position: -200% 0;
-          }
-          100% {
-            background-position: 200% 0;
-          }
-        }
-
-        .featured-swiper-container {
-          width: 100%;
-          height: 280px; /* Mobile */
-        }
-        
-        .featured-swiper {
-          width: 100%;
-          display: block;
-          height: 100%;
-        }
-        
-        /* Responsive heights */
-        @media (min-width: 480px) {
-          .featured-swiper-container {
-            height: 320px;
-          }
-        }
-        
-        @media (min-width: 768px) {
-          .featured-swiper-container {
-            height: 280px;
-          }
-        }
-        
-        @media (min-width: 1024px) {
-          .featured-swiper-container {
-            height: 320px;
-          }
-        }
-        
-        @media (min-width: 1440px) {
-          .featured-swiper-container {
-            height: 360px;
-          }
-        }
-
-        .featured-swiper .swiper-slide {
-          border-radius: 1rem;
-          transition: all 0.3s ease;
-        }
-
-        /* Navigation Buttons */
-        .featured-swiper :global(.swiper-button-prev),
-        .featured-swiper :global(.swiper-button-next) {
-          width: 44px;
-          height: 44px;
-          background: rgba(255, 255, 255, 0.9);
-          border-radius: 50%;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          opacity: 0.5;
-          transition: all 0.3s ease;
-        }
-
-        .featured-swiper :global(.swiper-button-prev):hover,
-        .featured-swiper :global(.swiper-button-next):hover {
-          opacity: 1;
-          transform: scale(1.1);
-        }
-
-        .featured-swiper :global(.swiper-button-prev)::after,
-        .featured-swiper :global(.swiper-button-next)::after {
-          font-size: 20px;
-          font-weight: bold;
-        }
-
-        /* Custom Pagination - Outside Swiper wrapper */
-        .custom-pagination {
-          position: relative;
-          width: 100%;
-          margin-top: 1rem;
-          height: 32px;
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-        }
-
-        .custom-pagination :global(.swiper-pagination-bullet) {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          transition: all 0.3s ease;
-          background: var(--swiper-pagination-bullet-inactive-color, #ff6b9d);
-          opacity: var(--swiper-pagination-bullet-inactive-opacity, 0.25);
-        }
-
-        .custom-pagination :global(.swiper-pagination-bullet-active) {
-          width: 12px;
-          height: 12px;
-          transform: scale(1.5);
-          background: var(--swiper-pagination-color, #ff6b9d);
-          opacity: 1;
-        }
-
-        /* Mobile Specific */
-        @media (max-width: 767px) {
-          .custom-pagination {
-            margin-top: 0.5rem;
-            height: 24px;
-            padding: 4px 8px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            gap: 4px;
-          }
-
-          .custom-pagination :global(.swiper-pagination-bullet) {
-            width: 6px;
-            height: 6px;
-          }
-
-          .custom-pagination :global(.swiper-pagination-bullet-active) {
-            width: 8px;
-            height: 8px;
-            transform: scale(1.2);
-          }
-        }
-
-        /* Desktop Hover Effects */
-        @media (min-width: 768px) {
-          .featured-swiper-container:hover :global(.swiper-button-prev),
-          .featured-swiper-container:hover :global(.swiper-button-next) {
-            opacity: 1;
-          }
-        }
-      `}</style>
+      <div className={styles.customPagination} ref={paginationRef}></div>
     </div>
   );
 };
