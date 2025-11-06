@@ -233,6 +233,7 @@ const FeaturedSwiper = () => {
             >
               {/* Wrapper for padding-top hack */}
               <div style={{ 
+                display: 'block',
                 position: 'relative',
                 width: '100%', 
                 paddingTop: '75%',  // 4:3 aspect ratio
@@ -315,6 +316,7 @@ const FeaturedSwiper = () => {
         }
 
         .featured-swiper .swiper-slide {
+          height: auto !important;  /* Override Swiper's height: 100% */
           border-radius: 1rem;
           transition: all 0.3s ease;
         }
@@ -345,8 +347,8 @@ const FeaturedSwiper = () => {
 
         /* Pagination */
         .featured-swiper :global(.swiper-pagination) {
-          bottom: 0 !important;
-          position: static !important;
+          position: relative !important;
+          bottom: auto !important;
           margin-top: 1rem;
           height: 32px;
           display: flex;
