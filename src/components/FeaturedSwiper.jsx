@@ -121,6 +121,7 @@ const FeaturedSwiper = () => {
     
     pagination: {
       el: '.featured-pagination-dots', // ✅ Use unique selector (ref is null at config creation)
+      type: 'bullets', // ✅ CRITICAL: Specify bullets type (prevents vertical)
       clickable: true,
       dynamicBullets: false,
     },

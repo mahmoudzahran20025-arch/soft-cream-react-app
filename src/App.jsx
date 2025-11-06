@@ -59,19 +59,19 @@ function AppContent() {
           cartCount={cartItemsCount}
         />
 
-        {/* Featured Swiper - ✅ Pure React Component */}
-        <section className="container mx-auto px-4 py-8">
-          <FeaturedSwiper />
-        </section>
-
-        {/* Marquee Swiper - ✅ Pure React Component */}
+        {/* Marquee Swiper - ✅ Pure React Component (مباشرة تحت Header) */}
         <section className="w-full">
           <MarqueeSwiper />
         </section>
 
-        {/* Trust Banner - ✅ Pure React Component */}
+        {/* Trust Banner - ✅ Pure React Component (بعد Marquee) */}
         <section className="w-full">
           <TrustBanner />
+        </section>
+
+        {/* Featured Swiper - ✅ Pure React Component (بعد Trust Banner) */}
+        <section className="container mx-auto px-4 py-8">
+          <FeaturedSwiper />
         </section>
 
         {/* Filter Bar */}
