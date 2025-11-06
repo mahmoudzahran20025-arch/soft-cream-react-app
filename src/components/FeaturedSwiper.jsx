@@ -109,6 +109,7 @@ const FeaturedSwiper = () => {
     watchSlidesProgress: true,
     centeredSlides: true,
     direction: 'ltr',
+    autoHeight: false, // ✅ CRITICAL: Don't auto-calculate height
     
     autoplay: {
       delay: 4500,
@@ -230,26 +231,21 @@ const FeaturedSwiper = () => {
             <SwiperSlide 
               key={slide.id}
               className="elementor-repeater-item-c8a489e"
+              style={{
+                aspectRatio: '4 / 3',  // ✅ Modern CSS - cleaner than padding hack
+                width: '100%',
+              }}
             >
-              {/* Wrapper for padding-top hack */}
-              <div style={{ 
-                display: 'block',
-                position: 'relative',
-                width: '100%', 
-                paddingTop: '75%',  // 4:3 aspect ratio
-              }}>
-                <div 
-                  className="swiper-slide-inner"
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    borderRadius: '1rem',
-                    overflow: 'hidden',
-                  }}
-                >
+              <div 
+                className="swiper-slide-inner"
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '1rem',
+                  overflow: 'hidden',
+                }}
+              >
                   {isLoaded ? (
                     <>
                       <div
@@ -293,7 +289,6 @@ const FeaturedSwiper = () => {
                   
                   <div className="swiper-slide-contents" />
                 </div>
-              </div>
             </SwiperSlide>
           );
         })}
@@ -313,12 +308,37 @@ const FeaturedSwiper = () => {
         .featured-swiper {
           width: 100%;
           display: block;
+          min-height: 280px; /* Fallback for small screens */
         }
 
         .featured-swiper .swiper-slide {
-          height: auto !important;  /* Override Swiper's height: 100% */
           border-radius: 1rem;
           transition: all 0.3s ease;
+        }
+        
+        /* Responsive min-heights based on viewport */
+        @media (min-width: 480px) {
+          .featured-swiper {
+            min-height: 320px;
+          }
+        }
+        
+        @media (min-width: 768px) {
+          .featured-swiper {
+            min-height: 280px;
+          }
+        }
+        
+        @media (min-width: 1024px) {
+          .featured-swiper {
+            min-height: 320px;
+          }
+        }
+        
+        @media (min-width: 1440px) {
+          .featured-swiper {
+            min-height: 360px;
+          }
         }
 
         /* Navigation Buttons */
