@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Pagination } from 'swiper/modules';
 import ProductCard from './ProductCard';
 import { useProducts } from '../context/ProductsContext';
+import styles from './ProductsGrid.module.css';
 
 // Swiper styles
 import 'swiper/css';
@@ -120,7 +121,7 @@ const ProductsGrid = ({ onAddToCart }) => {
               clickable: true,
               dynamicBullets: true
             }}
-            className="!pb-10"
+            className={styles.productsSwiper}
             dir="rtl"
           >
             {products.map(product => (

@@ -1,0 +1,70 @@
+/* ProductsGrid.module.css - Isolated styles for ProductsGrid Swipers */
+
+/* ========================================
+ * PRODUCTS SWIPER CONTAINER
+ * ======================================== */
+.productsSwiper {
+  padding-bottom: 2.5rem !important;
+}
+
+/* ========================================
+ * PRODUCTS PAGINATION - Scoped to ProductsGrid only
+ * ======================================== */
+.productsSwiper :global(.swiper-pagination) {
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  position: absolute !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+
+.productsSwiper :global(.swiper-pagination-bullet) {
+  width: 6px !important;
+  height: 6px !important;
+  background: #ff6b9d !important;
+  opacity: 0.3 !important;
+  transition: all 0.3s ease !important;
+}
+
+.productsSwiper :global(.swiper-pagination-bullet-active) {
+  width: 8px !important;
+  height: 8px !important;
+  opacity: 1 !important;
+  transform: scale(1.2) !important;
+}
+
+/* ========================================
+ * DYNAMIC BULLETS - For ProductsGrid
+ * ======================================== */
+.productsSwiper :global(.swiper-pagination-bullet-active-main) {
+  background: #ff6b9d !important;
+  opacity: 1 !important;
+}
+
+.productsSwiper :global(.swiper-pagination-bullet-active-prev),
+.productsSwiper :global(.swiper-pagination-bullet-active-next) {
+  opacity: 0.5 !important;
+}
+
+/* ========================================
+ * MOBILE OPTIMIZATION
+ * ======================================== */
+@media (max-width: 767px) {
+  .productsSwiper {
+    padding-bottom: 2rem !important;
+  }
+  
+  .productsSwiper :global(.swiper-pagination-bullet) {
+    width: 5px !important;
+    height: 5px !important;
+  }
+  
+  .productsSwiper :global(.swiper-pagination-bullet-active) {
+    width: 7px !important;
+    height: 7px !important;
+  }
+}

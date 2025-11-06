@@ -55,7 +55,7 @@ const FeaturedSwiper = () => {
   const swiperRef = useRef(null);
   const paginationRef = useRef(null); // ✅ Custom pagination element
   const [isMounted, setIsMounted] = useState(false);
-  const [loadedImages, setLoadedImages] = useState(new Set([1, 2]));
+  const [loadedImages, setLoadedImages] = useState(new Set([1, 2, 3, 4, 5, 6, 7, 8])); // ✅ Load all images immediately
 
   useEffect(() => {
     setIsMounted(true);

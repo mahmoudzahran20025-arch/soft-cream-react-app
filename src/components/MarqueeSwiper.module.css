@@ -34,3 +34,11 @@
   display: flex;
   align-items: center;
 }
+
+/* ✅ CRITICAL: Hide any pagination that might be created */
+.marqueeContainer :global(.swiper-pagination) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
