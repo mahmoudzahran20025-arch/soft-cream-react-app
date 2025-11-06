@@ -1,3 +1,20 @@
+/**
+ * ⚠️ DEPRECATED: This file is the OLD monolithic CheckoutModal
+ * 
+ * 🆕 NEW MODULAR VERSION: CheckoutModal/index.jsx
+ * 
+ * The new version is split into:
+ * - CheckoutModal/index.jsx (main orchestrator)
+ * - CheckoutModal/DeliveryOptions.jsx
+ * - CheckoutModal/CheckoutForm.jsx
+ * - CheckoutModal/OrderSummary.jsx
+ * - CheckoutModal/checkoutApi.js
+ * - CheckoutModal/validation.js
+ * 
+ * This file is kept for reference only.
+ * Please use: import CheckoutModal from './CheckoutModal'
+ */
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useProducts } from '../context/ProductsContext';
 import {

@@ -5,15 +5,18 @@ import ProductsGrid from './components/ProductsGrid';
 import ProductModal from './components/ProductModal';
 import NutritionSummary from './components/NutritionSummary';
 import FilterBar from './components/FilterBar';
+import Header from './components/Header';
 import CartModal from './components/CartModal';
 import CheckoutModal from './components/CheckoutModal';
+import OrdersBadge from './components/CheckoutModal/OrdersBadge';
+import MyOrdersModal from './components/CheckoutModal/MyOrdersModal';
+import TrackingModal from './components/CheckoutModal/TrackingModal';
 import FeaturedSwiper from './components/FeaturedSwiper';
 import MarqueeSwiper from './components/MarqueeSwiper';
 import Sidebar from './components/Sidebar';
 import ToastContainer from './components/Toast/ToastContainer';
 import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 import AnimatedBackground from './components/AnimatedBackground/AnimatedBackground';
-import { ShoppingCart, Menu, Moon, Sun, Globe } from 'lucide-react';
 import { useGlobal } from './context/GlobalProvider';
 
 // ✅ Inner App Component (has access to ProductsContext + GlobalProvider)
@@ -23,62 +26,17 @@ function AppContent() {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [showMyOrders, setShowMyOrders] = useState(false);
+  const [showTracking, setShowTracking] = useState(false);
+  const [trackingOrderId, setTrackingOrderId] = useState('');
 
-  // 🔗 Listen for events from Vanilla JS
-  useEffect(() => {
-    // Event: Open cart from header button
-    const handleOpenCart = () => {
-      console.log('🆕 React received: open-react-cart');
-      setShowCart(true);
-    };
-
-    // Event: Open checkout from Vanilla JS
-    const handleOpenCheckout = () => {
-      console.log('🆕 React received: open-react-checkout');
-      setShowCheckout(true);
-    };
-
-    window.addEventListener('open-react-cart', handleOpenCart);
-    window.addEventListener('open-react-checkout', handleOpenCheckout);
-
-    return () => {
-      window.removeEventListener('open-react-cart', handleOpenCart);
-      window.removeEventListener('open-react-checkout', handleOpenCheckout);
-    };
-  }, []);
-
-  // Note: Cart clearing is now handled by ProductsContext
-
-  // 🔗 Update header badge when cart changes
-  useEffect(() => {
-    const cartCount = getCartCount();
-    
-    // Update sidebar badges
-    if (window.sidebarModule && window.sidebarModule.updateSidebarBadges) {
-      window.sidebarModule.updateSidebarBadges();
-    }
-
-    // Update header cart badge
-    const headerBadge = document.getElementById('headerCartBadge');
-    if (headerBadge) {
-      headerBadge.textContent = cartCount;
-      headerBadge.style.display = cartCount > 0 ? 'flex' : 'none';
-    }
-
-    console.log('🆕 React cart count updated:', cartCount);
-  }, [cart, getCartCount]);
+  // ✅ Pure React - No more Vanilla JS event listeners needed
 
   const cartItemsCount = getCartCount();
 
-  const handleCheckout = (cart, total) => {
-    console.log('🛒 Initiating checkout:', { cart, total });
+  const handleCheckout = () => {
     setShowCart(false);
     setShowCheckout(true);
-    
-    // Dispatch event for Vanilla JS checkout module
-    window.dispatchEvent(new CustomEvent('react-initiate-checkout', {
-      detail: { cart, total }
-    }));
   };
 
   return (
@@ -88,72 +46,16 @@ function AppContent() {
 
       {/* Page Content */}
       <div className="relative z-10 min-h-screen">
-        {/* Header */}
-        <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between gap-2">
-              {/* Menu Button */}
-              <button
-                onClick={() => setShowSidebar(true)}
-                className="p-3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-lg"
-                aria-label="Open menu"
-              >
-                <Menu className="w-6 h-6" />
-              </button>
-
-              <div className="text-center flex-1">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  🍦 Soft Cream
-                </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Smart Nutrition & Energy
-                </p>
-              </div>
-              
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2">
-                {/* Dark Mode Toggle */}
-                <button
-                  onClick={toggleTheme}
-                  className="p-3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-lg"
-                  aria-label="Toggle theme"
-                  title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                >
-                  {theme === 'dark' ? (
-                    <Sun className="w-5 h-5" />
-                  ) : (
-                    <Moon className="w-5 h-5" />
-                  )}
-                </button>
-
-                {/* Language Toggle */}
-                <button
-                  onClick={toggleLanguage}
-                  className="p-3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-lg flex items-center gap-1"
-                  aria-label="Toggle language"
-                  title={language === 'ar' ? 'English' : 'العربية'}
-                >
-                  <Globe className="w-5 h-5" />
-                  <span className="text-xs font-bold">{language === 'ar' ? 'EN' : 'AR'}</span>
-                </button>
-
-                {/* Cart Button */}
-                <button
-                  onClick={() => setShowCart(!showCart)}
-                  className="relative p-3 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors shadow-lg"
-                  aria-label="Open cart"
-                >
-                  <ShoppingCart className="w-6 h-6" />
-                  {cartItemsCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                      {cartItemsCount}
-                    </span>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+        {/* ✅ Header Component - Clean & Modular */}
+        <Header
+          onOpenSidebar={() => setShowSidebar(true)}
+          onOpenCart={() => setShowCart(true)}
+          onToggleTheme={toggleTheme}
+          onToggleLanguage={toggleLanguage}
+          theme={theme}
+          language={language}
+          cartCount={cartItemsCount}
+        />
 
         {/* Featured Swiper - ✅ Pure React Component */}
         <section className="container mx-auto px-4 py-8">
@@ -201,6 +103,29 @@ function AppContent() {
 
         {/* Loading Screen - ✅ Pure React Component */}
         <LoadingScreen isLoading={loading} />
+
+        {/* Orders Badge - ✅ NEW: Floating badge for active orders */}
+        <OrdersBadge onClick={() => setShowMyOrders(true)} />
+
+        {/* My Orders Modal - ✅ NEW: Order history */}
+        <MyOrdersModal
+          isOpen={showMyOrders}
+          onClose={() => setShowMyOrders(false)}
+          onTrackOrder={(orderId) => {
+            setTrackingOrderId(orderId);
+            setShowTracking(true);
+          }}
+        />
+
+        {/* Tracking Modal - ✅ NEW: Track order status */}
+        <TrackingModal
+          isOpen={showTracking}
+          onClose={() => {
+            setShowTracking(false);
+            setTrackingOrderId('');
+          }}
+          initialOrderId={trackingOrderId}
+        />
       </div>
     </>
   );

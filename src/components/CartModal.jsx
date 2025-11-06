@@ -7,82 +7,25 @@ import { X, ShoppingCart, Calculator, ShieldCheck, Truck, CheckCircle2, Minus, P
  * 
  * ✅ Replaces: js/cart.js
  * ✅ Uses: ProductsContext for cart state (reactive)
- * ✅ No sessionStorage or window events needed
+ * ✅ Real-time updates - No stale state
  * ✅ Fully integrated with React ecosystem
  */
 const CartModal = ({ isOpen, onClose, onCheckout }) => {
-  const { t, currentLang } = useProducts();
-  const [cart, setCart] = useState([]);
-  const [products, setProducts] = useState({});
-  const [loading, setLoading] = useState(true);
+  // ✅ استخدام Context بدلاً من useState المحلي
+  const { 
+    t, 
+    currentLang,
+    cart,                    // ✅ من Context
+    products,                // ✅ من Context
+    updateCartQuantity,      // ✅ من Context
+    removeFromCart,          // ✅ من Context
+    clearCart,               // ✅ من Context
+    getCartCount,            // ✅ من Context
+    getCartTotal             // ✅ من Context
+  } = useProducts();
+  
   const [nutritionData, setNutritionData] = useState(null);
   const [nutritionLoading, setNutritionLoading] = useState(false);
-
-  // ✅ Load cart from sessionStorage on mount
-  useEffect(() => {
-    const loadCart = () => {
-      try {
-        const savedCart = sessionStorage.getItem('cart');
-        if (savedCart) {
-          const parsedCart = JSON.parse(savedCart);
-          setCart(parsedCart);
-          console.log('✅ Cart loaded from sessionStorage:', parsedCart);
-        }
-      } catch (error) {
-        console.error('❌ Failed to load cart:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadCart();
-  }, []);
-
-  // ✅ Fetch product details for cart items
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      if (cart.length === 0) return;
-
-      try {
-        const productIds = cart.map(item => item.productId);
-        const uniqueIds = [...new Set(productIds)];
-        
-        const productPromises = uniqueIds.map(async (id) => {
-          const response = await fetch(`https://softcream-api.mahmoud-zahran20025.workers.dev?path=/products/${id}`);
-          const result = await response.json();
-          return { id, data: result.data };
-        });
-
-        const productResults = await Promise.all(productPromises);
-        const productsMap = {};
-        productResults.forEach(({ id, data }) => {
-          productsMap[id] = data;
-        });
-
-        setProducts(productsMap);
-        console.log('✅ Product details loaded:', productsMap);
-      } catch (error) {
-        console.error('❌ Failed to fetch product details:', error);
-      }
-    };
-
-    fetchProductDetails();
-  }, [cart]);
-
-  // ✅ Save cart to sessionStorage whenever it changes
-  useEffect(() => {
-    if (!loading) {
-      sessionStorage.setItem('cart', JSON.stringify(cart));
-      
-      // ✅ Dispatch event for Vanilla JS compatibility (header badge)
-      const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-      window.dispatchEvent(new CustomEvent('react-cart-updated', {
-        detail: { count: cartCount, cart }
-      }));
-      
-      console.log('✅ Cart saved to sessionStorage:', cart);
-    }
-  }, [cart, loading]);
 
   // ✅ Fetch nutrition summary from backend
   useEffect(() => {
@@ -118,62 +61,7 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
     fetchNutrition();
   }, [cart]);
 
-  // ========================================
-  // Cart Operations
-  // ========================================
-
-  const updateQuantity = (productId, newQuantity) => {
-    if (newQuantity <= 0) {
-      removeItem(productId);
-      return;
-    }
-
-    const MAX_QUANTITY = 50;
-    if (newQuantity > MAX_QUANTITY) {
-      alert(t('errorMaxQuantity', { max: MAX_QUANTITY }) || `Maximum ${MAX_QUANTITY} items`);
-      return;
-    }
-
-    setCart(prevCart =>
-      prevCart.map(item =>
-        item.productId === productId
-          ? { ...item, quantity: newQuantity }
-          : item
-      )
-    );
-  };
-
-  const removeItem = (productId) => {
-    setCart(prevCart => prevCart.filter(item => item.productId !== productId));
-  };
-
-  const clearCart = () => {
-    if (window.confirm(t('confirmClearCart') || 'Are you sure you want to clear the cart?')) {
-      setCart([]);
-      sessionStorage.removeItem('cart');
-      console.log('✅ Cart cleared');
-    }
-  };
-
-  // ========================================
-  // Calculations
-  // ========================================
-
-  const calculateSubtotal = () => {
-    return cart.reduce((total, item) => {
-      const product = products[item.productId];
-      if (!product) return total;
-      return total + (product.price * item.quantity);
-    }, 0);
-  };
-
-  const calculateTotal = () => {
-    return calculateSubtotal(); // يمكن إضافة رسوم توصيل أو ضرائب هنا
-  };
-
-  const getTotalItems = () => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0);
-  };
+  // ✅ جميع العمليات من Context - لا حاجة لدوال محلية
 
   // ========================================
   // Render Helpers
@@ -194,14 +82,8 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
 
   const handleCheckout = () => {
     if (cart.length === 0) return;
-    
     if (onCheckout) {
-      onCheckout(cart, calculateTotal());
-    } else {
-      // Fallback: dispatch event for Vanilla JS checkout
-      window.dispatchEvent(new CustomEvent('react-initiate-checkout', {
-        detail: { cart, total: calculateTotal() }
-      }));
+      onCheckout();
     }
   };
 
@@ -216,9 +98,8 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
 
   if (!isOpen) return null;
 
-  const totalItems = getTotalItems();
-  const subtotal = calculateSubtotal();
-  const total = calculateTotal();
+  const totalItems = getCartCount();
+  const total = getCartTotal(products);
   const isEmpty = cart.length === 0;
 
   return (
@@ -308,7 +189,7 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
                       {/* Quantity Controls */}
                       <div className="flex items-center gap-2 mt-2">
                         <button
-                          onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                          onClick={() => updateCartQuantity(item.productId, item.quantity - 1)}
                           className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 hover:bg-primary hover:text-white flex items-center justify-center transition-colors"
                           aria-label="Decrease quantity"
                         >
@@ -318,14 +199,14 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                          onClick={() => updateCartQuantity(item.productId, item.quantity + 1)}
                           className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 hover:bg-primary hover:text-white flex items-center justify-center transition-colors"
                           aria-label="Increase quantity"
                         >
                           <Plus className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => removeItem(item.productId)}
+                          onClick={() => removeFromCart(item.productId)}
                           className="ml-auto w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 text-red-500 hover:text-white flex items-center justify-center transition-colors"
                           aria-label="Remove item"
                         >
@@ -345,10 +226,9 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
               })}
             </div>
           )}
-        </div>
 
-        {/* Nutrition Summary */}
-        {!isEmpty && nutritionData && (
+          {/* ✅ Nutrition Summary - داخل scroll div */}
+          {!isEmpty && nutritionData && (
           <div className="px-5 py-4 bg-gradient-to-br from-orange-50 to-pink-50 dark:from-gray-700 dark:to-gray-600 border-y border-orange-100 dark:border-gray-600">
             <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
               <Flame className="w-5 h-5 text-orange-500" />
@@ -438,9 +318,10 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
               </div>
             )}
           </div>
-        )}
+          )}
+        </div>
 
-        {/* Footer (Total & Checkout) */}
+        {/* Footer (Total & Checkout) - ✅ خارج scroll div */}
         {!isEmpty && (
           <div className="p-5 border-t border-pink-100 dark:border-gray-700 space-y-4 sticky bottom-0 bg-white dark:bg-gray-800 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-10">
             {/* Total */}
