@@ -145,7 +145,27 @@ export const translationsData = {
     "hours": "ساعة",
     "days": "يوم",
     "km": "كم",
-    "meters": "متر"
+    "meters": "متر",
+    
+    // Footer
+    "footerNavHealthy": "معلوماتنا الصحية",
+    "footerHealthyDesc": "نحن نقدم آيس كريم صحي مصنوع من مكونات طبيعية 100% مع قيم غذائية متوازنة لدعم نشاطك اليومي",
+    "footerFeatureEnergy": "طاقة طبيعية مستدامة",
+    "footerFeatureFocus": "تحسين التركيز والأداء الذهني",
+    "footerFeatureNatural": "مكونات طبيعية بدون إضافات صناعية",
+    "footerNavHours": "ساعات العمل",
+    "footerWeekDays": "السبت - الخميس",
+    "footerWeekHours": "10 ص - 12 م",
+    "footerFriday": "الجمعة",
+    "footerFridayHours": "2 م - 12 م",
+    "footerOpenNow": "مفتوح الآن",
+    "footerNavContact": "تواصل معنا",
+    "footerPhoneLabel": "اتصل بنا",
+    "footerEmailLabel": "البريد الإلكتروني",
+    "footerAddressLabel": "العنوان",
+    "footerAddressText": "شارع 9، المعادي، القاهرة، مصر",
+    "footerCopyright": "© 2024 سوفت كريم. جميع الحقوق محفوظة.",
+    "footerMadeWith": "صُنع بـ ❤️ في مصر"
   },
   "en": {
     "headerTitle": "Soft Cream",
@@ -287,6 +307,26 @@ export const translationsData = {
     "hours": "hours",
     "days": "days",
     "km": "km",
-    "meters": "meters"
+    "meters": "meters",
+    
+    // Footer
+    "footerNavHealthy": "Health Information",
+    "footerHealthyDesc": "We offer healthy ice cream made from 100% natural ingredients with balanced nutritional values to support your daily activity",
+    "footerFeatureEnergy": "Sustainable natural energy",
+    "footerFeatureFocus": "Improve focus and mental performance",
+    "footerFeatureNatural": "Natural ingredients without artificial additives",
+    "footerNavHours": "Working Hours",
+    "footerWeekDays": "Saturday - Thursday",
+    "footerWeekHours": "10 AM - 12 AM",
+    "footerFriday": "Friday",
+    "footerFridayHours": "2 PM - 12 AM",
+    "footerOpenNow": "Open Now",
+    "footerNavContact": "Contact Us",
+    "footerPhoneLabel": "Call Us",
+    "footerEmailLabel": "Email",
+    "footerAddressLabel": "Address",
+    "footerAddressText": "9 St, Maadi, Cairo, Egypt",
+    "footerCopyright": "© 2024 Soft Cream. All rights reserved.",
+    "footerMadeWith": "Made with ❤️ in Egypt"
   }
 };

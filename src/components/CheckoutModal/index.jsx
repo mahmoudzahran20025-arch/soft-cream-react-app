@@ -139,7 +139,8 @@ const CheckoutModal = ({ isOpen, onClose, cart = [] }) => {
     // Debounce recalculation
     const timer = setTimeout(recalculatePrices, 300);
     return () => clearTimeout(timer);
-  }, [isOpen, deliveryMethod, selectedBranch, userLocation, formData.phone, couponStatus]);
+  }, [isOpen, deliveryMethod, selectedBranch, userLocation,  couponStatus]);
+  //formData.phone,  
 
   // ================================================================
   // Helper Functions

@@ -6,6 +6,7 @@ import ProductModal from './components/ProductModal';
 import NutritionSummary from './components/NutritionSummary';
 import FilterBar from './components/FilterBar';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import CartModal from './components/CartModal';
 import CheckoutModal from './components/CheckoutModal';
 import OrdersBadge from './components/CheckoutModal/OrdersBadge';
@@ -74,6 +75,9 @@ function AppContent() {
         <main className="container mx-auto px-4 py-8">
           <ProductsGrid onAddToCart={addToCart} />
         </main>
+
+        {/* ✅ Footer Component - Complete footer with all info */}
+        <Footer />
 
         {/* Product Modal */}
         <ProductModal onAddToCart={addToCart} />
