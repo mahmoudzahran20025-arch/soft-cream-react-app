@@ -22,14 +22,15 @@
   width: 100%;
 }
 
-.marqueeSwiper :global(.swiper-wrapper) {
+/* ✅ FIXED: More specific selectors to avoid affecting other Swipers */
+.marqueeContainer .marqueeSwiper :global(.swiper-wrapper) {
   transition-timing-function: linear !important;
   align-items: center;
 }
 
-.marqueeSwiper :global(.swiper-slide) {
+.marqueeContainer .marqueeSwiper :global(.swiper-slide) {
   width: auto !important;
-  height: 52px;
+  height: 52px !important;  /* Only for marquee slides */
   display: flex;
   align-items: center;
 }

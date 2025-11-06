@@ -295,13 +295,12 @@ export const ProductsProvider = ({ children }) => {
     productsMap, // ✅ خريطة المنتجات
     filteredProducts,
     selectedProduct,
-    loading,
+    loading, // ✅ لتجنب race condition
     error,
     filters,
     currentLang, // ✅ تمرير اللغة الحالية
     t, // ✅ تمرير دالة الترجمة
     cart, // ✅ Cart state
-    loading, // ✅ لتجنب race condition
     fetchProducts,
     discoverProducts,
     searchProducts,
