@@ -8,14 +8,11 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 /**
- * FeaturedSwiper Component - Pure React Swiper Implementation
- * 
- * ✅ FIXED: Images now load and display correctly
- * ✅ Uses React state properly for re-rendering
- * ✅ CLS Optimized with skeleton loaders
+ * FeaturedSwiper Component - FIXED: Height Issue
+ * ✅ Removed aspect-ratio (causes height calculation bug)
+ * ✅ Using padding-top hack for 4:3 ratio
  */
 
-// ✅ Slides Data (8 slides total)
 const SLIDES_DATA = [
   {
     id: 1,
@@ -58,12 +55,10 @@ const FeaturedSwiper = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [loadedImages, setLoadedImages] = useState(new Set([1, 2]));
 
-  // ✅ CRITICAL: Wait for component to mount (fixes Next.js/SSR issues)
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // ✅ Progressive image loading AFTER mount
   useEffect(() => {
     if (!isMounted) return;
 
@@ -85,12 +80,10 @@ const FeaturedSwiper = () => {
       });
     };
 
-    // Small delay to prioritize LCP
     const timer = setTimeout(loadRemainingImages, 100);
     return () => clearTimeout(timer);
   }, [isMounted]);
 
-  // ✅ Force Swiper update when images load
   useEffect(() => {
     if (swiperRef.current?.swiper && loadedImages.size > 2) {
       console.log(`🔄 Updating Swiper (${loadedImages.size}/8 images loaded)`);
@@ -98,7 +91,6 @@ const FeaturedSwiper = () => {
     }
   }, [loadedImages]);
 
-  // ✅ Show skeleton until mounted (prevents flicker)
   if (!isMounted) {
     return (
       <div 
@@ -110,7 +102,6 @@ const FeaturedSwiper = () => {
     );
   }
 
-  // ✅ Swiper configuration
   const swiperConfig = {
     modules: [Navigation, Pagination, Autoplay],
     loop: true,
@@ -240,54 +231,67 @@ const FeaturedSwiper = () => {
             <SwiperSlide 
               key={slide.id}
               className="elementor-repeater-item-c8a489e"
-              style={{ aspectRatio: '4/3' }}
+              style={{
+                position: 'relative',
+                width: '100%',
+                paddingTop: '75%', // 4:3 aspect ratio
+                height: 0,
+                overflow: 'hidden'
+              }}
             >
-              <div className="swiper-slide-inner">
-                {isLoaded ? (
-                  // ✅ Real Image
-                  <>
+              <div 
+                className="swiper-slide-inner"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                }}
+              >
+                  {isLoaded ? (
+                    <>
+                      <div
+                        className="swiper-slide-bg"
+                        style={{
+                          backgroundImage: `url(${slide.image})`,
+                          backgroundColor: '#FFF5EE',
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                        }}
+                      />
+                      {slide.priority === 'high' && (
+                        <link
+                          rel="preload"
+                          as="image"
+                          href={slide.image}
+                          fetchpriority="high"
+                        />
+                      )}
+                    </>
+                  ) : (
                     <div
-                      className="swiper-slide-bg"
+                      className="skeleton-shimmer"
                       style={{
-                        backgroundImage: `url(${slide.image})`,
-                        backgroundColor: '#FFF5EE',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
                         position: 'absolute',
                         top: 0,
                         left: 0,
                         width: '100%',
                         height: '100%',
+                        background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+                        backgroundSize: '200% 100%',
+                        animation: 'shimmer 1.5s infinite',
                       }}
                     />
-                    {slide.priority === 'high' && (
-                      <link
-                        rel="preload"
-                        as="image"
-                        href={slide.image}
-                        fetchpriority="high"
-                      />
-                    )}
-                  </>
-                ) : (
-                  // ⏳ Skeleton Loader
-                  <div
-                    className="skeleton-shimmer"
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
-                      backgroundSize: '200% 100%',
-                      animation: 'shimmer 1.5s infinite',
-                    }}
-                  />
-                )}
-                
-                <div className="swiper-slide-contents" />
-              </div>
+                  )}
+                  
+                  <div className="swiper-slide-contents" />
+                </div>
             </SwiperSlide>
           );
         })}
@@ -310,8 +314,6 @@ const FeaturedSwiper = () => {
         }
 
         .featured-swiper .swiper-slide {
-          position: relative;
-          overflow: hidden;
           border-radius: 1rem;
           transition: all 0.3s ease;
         }
