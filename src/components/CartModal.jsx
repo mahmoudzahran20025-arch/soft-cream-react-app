@@ -16,7 +16,8 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
     t, 
     currentLang,
     cart,                    // ✅ من Context
-    products,                // ✅ من Context
+    productsMap,             // ✅ خريطة المنتجات (Map)
+    loading,                 // ✅ لتجنب race condition
     updateCartQuantity,      // ✅ من Context
     removeFromCart,          // ✅ من Context
     clearCart,               // ✅ من Context
@@ -99,8 +100,11 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
   if (!isOpen) return null;
 
   const totalItems = getCartCount();
-  const total = getCartTotal(products);
+  const total = getCartTotal(productsMap);
   const isEmpty = cart.length === 0;
+  
+  // ✅ عرض loading state إذا كانت المنتجات لم تحمل بعد
+  const isProductsLoading = loading && Object.keys(productsMap).length === 0;
 
   return (
     <div
@@ -155,11 +159,15 @@ const CartModal = ({ isOpen, onClose, onCheckout }) => {
             // Cart Items List
             <div className="space-y-4">
               {cart.map((item) => {
-                const product = products[item.productId];
+                const product = productsMap[item.productId];
                 if (!product) {
+                  console.warn('⚠️ Product not found for ID:', item.productId, '| Available IDs:', Object.keys(productsMap));
                   return (
-                    <div key={item.productId} className="p-4 bg-gray-100 rounded-lg animate-pulse">
-                      <div className="h-20 bg-gray-200 rounded"></div>
+                    <div key={item.productId} className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse">
+                      <div className="h-20 bg-gray-200 dark:bg-gray-600 rounded"></div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        Loading product {item.productId}...
+                      </p>
                     </div>
                   );
                 }

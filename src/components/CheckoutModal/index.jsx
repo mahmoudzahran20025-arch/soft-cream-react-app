@@ -18,7 +18,7 @@ import { storage } from '../../services/storage';
  * CheckoutModal - Main Container
  * Orchestrates the checkout flow
  */
-const CheckoutModal = ({ isOpen, onClose, cart = [] }) => {
+const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
   const { t, currentLang, clearCart } = useProducts();
 
   // ================================================================
@@ -387,15 +387,14 @@ const CheckoutModal = ({ isOpen, onClose, cart = [] }) => {
         console.warn('⚠️ Failed to save order locally (non-critical)');
       }
       
-      // Clear cart and close modal
+      // Clear cart
       clearCart();
       
-      alert(
-        t('orderSuccessMessage', { orderId }) || 
-        `تم إرسال الطلب بنجاح! 🎉\nرقم الطلب: ${orderId}`
-      );
+      // ✅ إبلاغ App.jsx بنجاح الطلب
+      if (onCheckoutSuccess) {
+        onCheckoutSuccess(orderId);
+      }
       
-      onClose();
       resetForm();
     } catch (error) {
       console.error('❌ Order submission failed:', error);

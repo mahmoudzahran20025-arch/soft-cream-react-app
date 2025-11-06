@@ -279,8 +279,20 @@ export const ProductsProvider = ({ children }) => {
     }, 0);
   }, [cart]);
 
+  // ✅ إنشاء productsMap لتسهيل الوصول في CartModal
+  const productsMap = useMemo(() => {
+    const map = {};
+    products.forEach(product => {
+      if (product && product.id) {
+        map[product.id] = product;
+      }
+    });
+    return map;
+  }, [products]);
+
   const value = {
     products,
+    productsMap, // ✅ خريطة المنتجات
     filteredProducts,
     selectedProduct,
     loading,
@@ -289,6 +301,7 @@ export const ProductsProvider = ({ children }) => {
     currentLang, // ✅ تمرير اللغة الحالية
     t, // ✅ تمرير دالة الترجمة
     cart, // ✅ Cart state
+    loading, // ✅ لتجنب race condition
     fetchProducts,
     discoverProducts,
     searchProducts,

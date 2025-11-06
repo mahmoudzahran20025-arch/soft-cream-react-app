@@ -94,6 +94,14 @@ function AppContent() {
           isOpen={showCheckout}
           onClose={() => setShowCheckout(false)}
           cart={cart}
+          onCheckoutSuccess={(orderId) => {
+            // 1. أغلق نافذة الدفع
+            setShowCheckout(false);
+            // 2. حضّر نافذة التتبع
+            setTrackingOrderId(orderId);
+            // 3. افتح نافذة التتبع
+            setShowTracking(true);
+          }}
         />
 
         {/* Sidebar - ✅ Pure React Component */}
