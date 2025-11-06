@@ -10,11 +10,9 @@ import 'swiper/css/pagination';
 /**
  * FeaturedSwiper Component - Pure React Swiper Implementation
  * 
- * ✅ Replaces: js/swiper-featured.js
- * ✅ Uses: swiper/react official library
- * ✅ Features: Centered mode, autoplay, navigation, pagination
- * ✅ Responsive: Mobile (1.3), Tablet (2.3), Desktop (2.6-3.4)
- * ✅ CLS Optimized: Pre-loaded slides with skeleton
+ * ✅ FIXED: Images now load and display correctly
+ * ✅ Uses React state properly for re-rendering
+ * ✅ CLS Optimized with skeleton loaders
  */
 
 // ✅ Slides Data (8 slides total)
@@ -22,7 +20,7 @@ const SLIDES_DATA = [
   {
     id: 1,
     image: 'https://i.ibb.co/LzP97qhB/481279444-627854640201713-219907065737357117-n-min.webp',
-    priority: 'high', // LCP optimization
+    priority: 'high',
   },
   {
     id: 2,
@@ -57,99 +55,107 @@ const SLIDES_DATA = [
 
 const FeaturedSwiper = () => {
   const swiperRef = useRef(null);
-  const [isReady, setIsReady] = useState(false);
-  const [loadedImages, setLoadedImages] = useState(new Set([1, 2])); // Pre-load first 2
+  const [isMounted, setIsMounted] = useState(false);
+  const [loadedImages, setLoadedImages] = useState(new Set([1, 2]));
 
-  // ✅ Progressive image loading
+  // ✅ CRITICAL: Wait for component to mount (fixes Next.js/SSR issues)
   useEffect(() => {
-    const loadImages = async () => {
-      // Load remaining images after initial render
-      const imagesToLoad = SLIDES_DATA.slice(2).map(slide => slide.image);
-      
-      imagesToLoad.forEach((src, index) => {
+    setIsMounted(true);
+  }, []);
+
+  // ✅ Progressive image loading AFTER mount
+  useEffect(() => {
+    if (!isMounted) return;
+
+    const loadRemainingImages = () => {
+      SLIDES_DATA.slice(2).forEach((slide) => {
         const img = new Image();
-        img.src = src;
         img.onload = () => {
-          setLoadedImages(prev => new Set([...prev, index + 3]));
+          setLoadedImages(prev => {
+            const updated = new Set(prev);
+            updated.add(slide.id);
+            console.log(`✅ Image ${slide.id} loaded`);
+            return updated;
+          });
         };
+        img.onerror = () => {
+          console.warn(`⚠️ Failed to load image ${slide.id}`);
+        };
+        img.src = slide.image;
       });
     };
 
-    // Delay loading to prioritize LCP
-    const timer = setTimeout(loadImages, 100);
+    // Small delay to prioritize LCP
+    const timer = setTimeout(loadRemainingImages, 100);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isMounted]);
 
-  // 🔴 إجبار Swiper على التحديث عند تحميل الصور
+  // ✅ Force Swiper update when images load
   useEffect(() => {
-    if (swiperRef.current && swiperRef.current.swiper) {
-      console.log('🔄 Images loaded state changed, updating Swiper instance...');
+    if (swiperRef.current?.swiper && loadedImages.size > 2) {
+      console.log(`🔄 Updating Swiper (${loadedImages.size}/8 images loaded)`);
       swiperRef.current.swiper.update();
     }
   }, [loadedImages]);
 
+  // ✅ Show skeleton until mounted (prevents flicker)
+  if (!isMounted) {
+    return (
+      <div 
+        className="featured-swiper-container w-full"
+        style={{ minHeight: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <div className="animate-pulse text-gray-400">Loading slides...</div>
+      </div>
+    );
+  }
+
   // ✅ Swiper configuration
   const swiperConfig = {
     modules: [Navigation, Pagination, Autoplay],
-    
-    // Basic Settings
     loop: true,
     speed: 600,
     watchSlidesProgress: true,
     centeredSlides: true,
-    direction: 'ltr', // Always LTR for images
+    direction: 'ltr',
     
-    // Autoplay
     autoplay: {
       delay: 4500,
       disableOnInteraction: false,
       pauseOnMouseEnter: true,
     },
     
-    // Pagination
     pagination: {
       clickable: true,
       dynamicBullets: false,
     },
     
-    // Navigation
     navigation: true,
     
-    // Mobile (Default < 768px)
     slidesPerView: 1.3,
     slidesPerGroup: 1,
     spaceBetween: 16,
     
-    // Responsive Breakpoints
     breakpoints: {
-      // Small Mobile (480px+)
       480: {
         slidesPerView: 1.4,
         spaceBetween: 16,
       },
-      
-      // Tablet (768px+)
       768: {
         slidesPerView: 2.3,
         slidesPerGroup: 1,
         spaceBetween: 20,
       },
-      
-      // Desktop (1024px+)
       1024: {
         slidesPerView: 2.6,
         slidesPerGroup: 1,
         spaceBetween: 24,
       },
-      
-      // Large Desktop (1440px+)
       1440: {
         slidesPerView: 3.3,
         slidesPerGroup: 1,
         spaceBetween: 28,
       },
-      
-      // Extra Large Desktop (1920px+)
       1920: {
         slidesPerView: 3.4,
         slidesPerGroup: 1,
@@ -157,12 +163,9 @@ const FeaturedSwiper = () => {
       },
     },
     
-    // Events
     onInit: (swiper) => {
       console.log('✅ Featured Swiper initialized:', swiper.slides.length, 'slides');
-      setIsReady(true);
       
-      // Apply initial opacity
       swiper.slides.forEach((slide, index) => {
         if (index !== swiper.activeIndex) {
           slide.style.opacity = '0.35';
@@ -173,7 +176,6 @@ const FeaturedSwiper = () => {
     },
     
     onSlideChange: (swiper) => {
-      // Update opacity on slide change
       swiper.slides.forEach((slide, index) => {
         if (index === swiper.activeIndex) {
           slide.style.opacity = '1';
@@ -184,31 +186,25 @@ const FeaturedSwiper = () => {
     },
     
     onProgress: (swiper) => {
-      // Progressive fade effect
       swiper.slides.forEach((slide) => {
         const progress = Math.abs(slide.progress);
         
-        // Desktop: 3 clear slides (active + prev/next)
         if (window.innerWidth >= 1024) {
           if (progress === 0) {
-            // Active slide
             slide.style.opacity = '1';
             slide.style.transform = 'scale(1)';
             slide.style.filter = 'grayscale(0%)';
           } else if (progress <= 1) {
-            // Prev/Next slides (clear)
             slide.style.opacity = '0.75';
             slide.style.transform = 'scale(0.98)';
             slide.style.filter = 'grayscale(0%)';
           } else {
-            // Distant slides (fade)
             const opacity = Math.max(0.2, 1 - (progress - 1) * 0.4);
             slide.style.opacity = opacity;
             slide.style.transform = `scale(${Math.max(0.92, 1 - (progress - 1) * 0.04)})`;
             slide.style.filter = `grayscale(${Math.min(30, (progress - 1) * 20)}%)`;
           }
         } else {
-          // Mobile/Tablet: Default behavior
           const opacity = Math.max(0.2, 1 - progress * 0.6);
           const scale = Math.max(0.95, 1 - progress * 0.05);
           
@@ -229,7 +225,7 @@ const FeaturedSwiper = () => {
       <Swiper
         {...swiperConfig}
         ref={swiperRef}
-        className={`featured-swiper ${isReady ? 'swiper-ready' : ''}`}
+        className="featured-swiper swiper-ready"
         style={{
           '--swiper-navigation-color': '#ff6b9d',
           '--swiper-pagination-color': '#ff6b9d',
@@ -246,50 +242,50 @@ const FeaturedSwiper = () => {
               className="elementor-repeater-item-c8a489e"
               style={{ aspectRatio: '4/3' }}
             >
-              {isLoaded ? (
-                // Loaded Image
-                <div
-                  className="swiper-slide-bg"
-                  style={{
-                    backgroundImage: `url(${slide.image})`,
-                    backgroundColor: '#FFF5EE',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    transition: 'opacity 0.3s ease',
-                  }}
-                >
-                  {slide.priority === 'high' && (
-                    <link
-                      rel="preload"
-                      as="image"
-                      href={slide.image}
-                      fetchpriority="high"
-                    />
-                  )}
-                </div>
-              ) : (
-                // Skeleton Loader
-                <div
-                  className="skeleton-shimmer"
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
-                    backgroundSize: '200% 100%',
-                    animation: 'shimmer 1.5s infinite',
-                  }}
-                />
-              )}
-              
               <div className="swiper-slide-inner">
+                {isLoaded ? (
+                  // ✅ Real Image
+                  <>
+                    <div
+                      className="swiper-slide-bg"
+                      style={{
+                        backgroundImage: `url(${slide.image})`,
+                        backgroundColor: '#FFF5EE',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    />
+                    {slide.priority === 'high' && (
+                      <link
+                        rel="preload"
+                        as="image"
+                        href={slide.image}
+                        fetchpriority="high"
+                      />
+                    )}
+                  </>
+                ) : (
+                  // ⏳ Skeleton Loader
+                  <div
+                    className="skeleton-shimmer"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+                      backgroundSize: '200% 100%',
+                      animation: 'shimmer 1.5s infinite',
+                    }}
+                  />
+                )}
+                
                 <div className="swiper-slide-contents" />
               </div>
             </SwiperSlide>
@@ -311,12 +307,6 @@ const FeaturedSwiper = () => {
         .featured-swiper {
           width: 100%;
           height: 100%;
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-
-        .featured-swiper.swiper-ready {
-          opacity: 1;
         }
 
         .featured-swiper .swiper-slide {
