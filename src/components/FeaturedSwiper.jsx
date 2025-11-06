@@ -214,12 +214,7 @@ const FeaturedSwiper = () => {
     <div 
       className="featured-swiper-container w-full"
       dir="ltr"
-      style={{
-        // ✅ CRITICAL: Set explicit height for Swiper container
-        // This ensures aspect-ratio works correctly
-        // Mobile: ~220px, Tablet: ~300px, Desktop: ~350px
-        minHeight: 'clamp(220px, 50vw, 350px)',
-      }}
+      style={{}}
     >
       <Swiper
         {...swiperConfig}
@@ -317,9 +312,40 @@ const FeaturedSwiper = () => {
           }
         }
 
+        .featured-swiper-container {
+          width: 100%;
+          height: 280px; /* Mobile */
+        }
+        
         .featured-swiper {
           width: 100%;
           display: block;
+          height: 100%;
+        }
+        
+        /* Responsive heights */
+        @media (min-width: 480px) {
+          .featured-swiper-container {
+            height: 320px;
+          }
+        }
+        
+        @media (min-width: 768px) {
+          .featured-swiper-container {
+            height: 280px;
+          }
+        }
+        
+        @media (min-width: 1024px) {
+          .featured-swiper-container {
+            height: 320px;
+          }
+        }
+        
+        @media (min-width: 1440px) {
+          .featured-swiper-container {
+            height: 360px;
+          }
         }
 
         .featured-swiper .swiper-slide {
