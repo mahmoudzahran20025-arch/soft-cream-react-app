@@ -1,18 +1,19 @@
 import React from 'react';
-import { ShoppingCart, Menu, Moon, Sun, Globe } from 'lucide-react';
+import { ShoppingCart, Menu, Globe } from 'lucide-react'; // <-- شيلنا Moon و Sun لأننا مش محتاجينهم
+import { AnimatedLogo } from './AnimatedLogo'; // <-- الخطوة 1: استدعاء اللوجو
+import './AnimatedLogo.css'; // <-- الخطوة 2: استدعاء ملف الأنيميشن
 
 /**
  * Header Component
- * Main navigation header with cart, theme toggle, and language switcher
+ * Main navigation header with animated logo, cart, and language switcher
  */
 const Header = ({ 
   onOpenSidebar, 
   onOpenCart, 
-  onToggleTheme, 
   onToggleLanguage, 
-  theme, 
   language, 
   cartCount 
+  // <-- الخطوة 3: شيلنا onToggleTheme و theme من هنا
 }) => {
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
@@ -27,31 +28,21 @@ const Header = ({
             <Menu className="w-6 h-6" />
           </button>
 
-          {/* Logo */}
-          <div className="text-center flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              🍦 Soft Cream
-            </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Smart Nutrition & Energy
-            </p>
+          {/* --- الخطوة 4: تم استبدال اللوجو النصي باللوجو المتحرك --- */}
+          <div className="flex-1 flex justify-center items-center">
+            {/* الـ div دا بيتحكم في حجم اللوجو عشان يتجاوب مع الموبايل 
+              h-14 = ارتفاع 56 بكسل. w-auto = العرض أوتوماتيك
+            */}
+            <div className="w-auto h-14">
+              <AnimatedLogo />
+            </div>
           </div>
+          {/* --- نهاية جزء اللوجو --- */}
           
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={onToggleTheme}
-              className="p-3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors shadow-lg"
-              aria-label="Toggle theme"
-              title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
+            
+            {/* --- الخطوة 5: تم حذف زرار Dark Mode Toggle --- */}
 
             {/* Language Toggle */}
             <button
