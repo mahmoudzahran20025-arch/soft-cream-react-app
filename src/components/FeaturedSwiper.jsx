@@ -1,14 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay, EffectFade, Parallax } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import styles from './FeaturedSwiper.module.css';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import 'swiper/css/effect-fade';
-import 'swiper/css/parallax';
 
 /**
  * Hero Marketing Swiper - Premium Modern Design
@@ -116,17 +114,12 @@ const FeaturedSwiper = () => {
   }
 
   const swiperConfig = {
-    modules: [Navigation, Pagination, Autoplay, EffectFade, Parallax],
+    modules: [Navigation, Pagination, Autoplay],
     loop: true,
-    speed: 900, // Smooth transitions
-    effect: 'fade', // Fade effect for hero slides
-    fadeEffect: {
-      crossFade: true,
-    },
-    parallax: true, // Enable parallax
+    speed: 800,
     direction: 'ltr',
     autoHeight: false,
-    allowTouchMove: true, // Touch/swipe enabled
+    allowTouchMove: true,
     
     autoplay: {
       delay: 5000, // 5 seconds per slide
@@ -188,10 +181,9 @@ const FeaturedSwiper = () => {
         {SLIDES_DATA.map((slide) => (
           <SwiperSlide key={slide.id}>
             <div className={styles.slideWrapper}>
-              {/* Background Image with Parallax */}
+              {/* Background Image */}
               <div 
                 className={styles.slideBackground}
-                data-swiper-parallax="-23%"
                 style={{
                   backgroundImage: `url(${slide.image})`,
                 }}
@@ -213,30 +205,24 @@ const FeaturedSwiper = () => {
               {/* Content Overlay */}
               <div className={styles.slideContent}>
                 <div className={styles.contentInner}>
-                  {/* Headline with Parallax */}
+                  {/* Headline */}
                   <h2 
                     className={`${styles.headline} ${slide.theme === 'light' ? styles.textLight : styles.textDark}`}
-                    data-swiper-parallax="-300"
-                    data-swiper-parallax-opacity="0"
                   >
                     {slide.headline}
                   </h2>
 
-                  {/* Subline with Parallax */}
+                  {/* Subline */}
                   <p 
                     className={`${styles.subline} ${slide.theme === 'light' ? styles.textLight : styles.textDark}`}
-                    data-swiper-parallax="-200"
-                    data-swiper-parallax-opacity="0"
                   >
                     {slide.subline}
                   </p>
 
-                  {/* CTA Button with Parallax */}
+                  {/* CTA Button */}
                   <a 
                     href={slide.ctaLink}
                     className={styles.ctaButton}
-                    data-swiper-parallax="-100"
-                    data-swiper-parallax-opacity="0"
                   >
                     {slide.ctaText}
                     <svg 
