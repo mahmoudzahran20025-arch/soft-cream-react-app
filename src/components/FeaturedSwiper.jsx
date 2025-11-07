@@ -1,17 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay, EffectFade, Parallax } from 'swiper/modules';
 import styles from './FeaturedSwiper.module.css';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import 'swiper/css/effect-fade';
+import 'swiper/css/parallax';
 
 /**
- * FeaturedSwiper Component - FIXED: Height Issue
- * ✅ Removed aspect-ratio (causes height calculation bug)
- * ✅ Using padding-top hack for 4:3 ratio
+ * Hero Marketing Swiper - Premium Modern Design
+ * ✅ Full-screen hero slides with text overlays
+ * ✅ Advanced animations (fade + scale + parallax)
+ * ✅ CTA buttons with smooth transitions
+ * ✅ Mobile-first responsive design
  */
 
 const SLIDES_DATA = [
@@ -19,35 +23,75 @@ const SLIDES_DATA = [
     id: 1,
     image: 'https://i.ibb.co/LzP97qhB/481279444-627854640201713-219907065737357117-n-min.webp',
     priority: 'high',
+    headline: 'تجربة مميزة',
+    subline: 'اكتشف عالماً من النكهات الفريدة',
+    ctaText: 'تسوق الآن',
+    ctaLink: '#shop',
+    theme: 'light', // light or dark text
   },
   {
     id: 2,
     image: 'https://i.ibb.co/4nNL0KR6/Gemini-Generated-Image-7z63p77z63p77z63.png',
     priority: 'high',
+    headline: 'جودة استثنائية',
+    subline: 'منتجات طازجة يومياً من أجود المكونات',
+    ctaText: 'اكتشف المزيد',
+    ctaLink: '#discover',
+    theme: 'dark',
   },
   {
     id: 3,
     image: 'https://i.ibb.co/xq6xwTq2/484012205-623030934031341-1808374385255644063-n.jpg',
+    headline: 'عروض حصرية',
+    subline: 'خصومات تصل إلى 30% على مجموعة مختارة',
+    ctaText: 'استفد الآن',
+    ctaLink: '#offers',
+    theme: 'light',
   },
   {
     id: 4,
     image: 'https://i.ibb.co/67cV4CJc/484157834-622859394048495-6880924063204865717-n-min.webp',
+    headline: 'إبداع لا حدود له',
+    subline: 'تشكيلة واسعة تناسب جميع الأذواق',
+    ctaText: 'شاهد الكل',
+    ctaLink: '#all',
+    theme: 'dark',
   },
   {
     id: 5,
     image: 'https://i.ibb.co/8gQ15nZ7/558984721-791054437228989-7733276430689348371-n-min.jpg',
+    headline: 'طعم الأصالة',
+    subline: 'وصفات تقليدية بلمسة عصرية',
+    ctaText: 'جرّب الآن',
+    ctaLink: '#try',
+    theme: 'light',
   },
   {
     id: 6,
     image: 'https://i.ibb.co/35fbWCYY/495226124-663623663305401-7196241149356063471-n-min.jpg',
+    headline: 'لحظات سعيدة',
+    subline: 'اصنع ذكريات لا تُنسى مع أحبائك',
+    ctaText: 'اطلب الآن',
+    ctaLink: '#order',
+    theme: 'dark',
   },
   {
     id: 7,
     image: 'https://i.ibb.co/Q7BshLpx/514410102-708973618770405-257295013446953510-n.jpg',
+    headline: 'تميّز دائماً',
+    subline: 'منتجات فاخرة لكل المناسبات الخاصة',
+    ctaText: 'استكشف',
+    ctaLink: '#explore',
+    theme: 'light',
   },
   {
     id: 8,
     image: 'https://i.ibb.co/LzhzfnGY/484032829-621596114174823-1720175782820299419-n.jpg',
+    headline: 'نكهة استثنائية',
+    subline: 'تجربة فريدة في كل قضمة',
+    ctaText: 'اطلب الآن',
+    ctaLink: '#order-now',
+    theme: 'dark',
   },
 ];
 
@@ -63,8 +107,8 @@ const FeaturedSwiper = () => {
   if (!isMounted) {
     return (
       <div 
-        className={`${styles.featuredSwiperContainer} w-full`}
-        style={{ minHeight: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        className={`${styles.heroSwiperContainer} w-full`}
+        style={{ minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
         <div className="animate-pulse text-gray-400">Loading slides...</div>
       </div>
@@ -72,178 +116,152 @@ const FeaturedSwiper = () => {
   }
 
   const swiperConfig = {
-    modules: [Navigation, Pagination, Autoplay],
+    modules: [Navigation, Pagination, Autoplay, EffectFade, Parallax],
     loop: true,
-    speed: 600,
-    watchSlidesProgress: true,
-    centeredSlides: true,
+    speed: 900, // Smooth transitions
+    effect: 'fade', // Fade effect for hero slides
+    fadeEffect: {
+      crossFade: true,
+    },
+    parallax: true, // Enable parallax
     direction: 'ltr',
-    autoHeight: false, // ✅ CRITICAL: Don't auto-calculate height
+    autoHeight: false,
+    allowTouchMove: true, // Touch/swipe enabled
     
     autoplay: {
-      delay: 4500,
+      delay: 5000, // 5 seconds per slide
       disableOnInteraction: false,
       pauseOnMouseEnter: true,
     },
     
     pagination: {
-      el: '.featured-pagination-dots', // ✅ Use unique selector (ref is null at config creation)
-      type: 'bullets', // ✅ CRITICAL: Specify bullets type (prevents vertical)
+      el: '.featured-pagination-dots',
+      type: 'bullets',
       clickable: true,
       dynamicBullets: false,
     },
     
     navigation: true,
     
-    slidesPerView: 1.3,
+    slidesPerView: 1, // Full-width hero slides on mobile
     slidesPerGroup: 1,
-    spaceBetween: 16,
+    spaceBetween: 0,
+    centeredSlides: true,
     
     breakpoints: {
-      480: {
-        slidesPerView: 1.4,
-        spaceBetween: 16,
-      },
       768: {
-        slidesPerView: 2.3,
-        slidesPerGroup: 1,
+        slidesPerView: 1.15, // Slight peek on tablet
         spaceBetween: 20,
       },
       1024: {
-        slidesPerView: 2.6,
-        slidesPerGroup: 1,
+        slidesPerView: 1.3, // Peek style on desktop
         spaceBetween: 24,
       },
       1440: {
-        slidesPerView: 3.3,
-        slidesPerGroup: 1,
-        spaceBetween: 28,
-      },
-      1920: {
-        slidesPerView: 3.4,
-        slidesPerGroup: 1,
+        slidesPerView: 1.4,
         spaceBetween: 32,
       },
     },
     
     onInit: (swiper) => {
-      console.log('✅ Featured Swiper initialized:', swiper.slides.length, 'slides');
-      
-      swiper.slides.forEach((slide, index) => {
-        if (index !== swiper.activeIndex) {
-          slide.style.opacity = '0.35';
-        } else {
-          slide.style.opacity = '1';
-        }
-      });
-    },
-    
-    onSlideChange: (swiper) => {
-      swiper.slides.forEach((slide, index) => {
-        if (index === swiper.activeIndex) {
-          slide.style.opacity = '1';
-        } else {
-          slide.style.opacity = '0.35';
-        }
-      });
-    },
-    
-    onProgress: (swiper) => {
-      swiper.slides.forEach((slide) => {
-        const progress = Math.abs(slide.progress);
-        
-        if (window.innerWidth >= 1024) {
-          if (progress === 0) {
-            slide.style.opacity = '1';
-            slide.style.transform = 'scale(1)';
-            slide.style.filter = 'grayscale(0%)';
-          } else if (progress <= 1) {
-            slide.style.opacity = '0.75';
-            slide.style.transform = 'scale(0.98)';
-            slide.style.filter = 'grayscale(0%)';
-          } else {
-            const opacity = Math.max(0.2, 1 - (progress - 1) * 0.4);
-            slide.style.opacity = opacity;
-            slide.style.transform = `scale(${Math.max(0.92, 1 - (progress - 1) * 0.04)})`;
-            slide.style.filter = `grayscale(${Math.min(30, (progress - 1) * 20)}%)`;
-          }
-        } else {
-          const opacity = Math.max(0.2, 1 - progress * 0.6);
-          const scale = Math.max(0.95, 1 - progress * 0.05);
-          
-          slide.style.opacity = opacity;
-          slide.style.transform = `scale(${scale})`;
-          slide.style.filter = `grayscale(${Math.min(20, progress * 20)}%)`;
-        }
-      });
+      console.log('✅ Hero Swiper initialized:', swiper.slides.length, 'slides');
     },
   };
 
   return (
     <div 
-      className={`${styles.featuredSwiperContainer} w-full`}
+      className={`${styles.heroSwiperContainer} w-full`}
       dir="ltr"
     >
       <Swiper
         {...swiperConfig}
         ref={swiperRef}
-        className={`${styles.featuredSwiper} swiper-ready`}
+        className={`${styles.heroSwiper} swiper-ready`}
         style={{
-          '--swiper-navigation-color': '#ff6b9d',
+          '--swiper-navigation-color': '#ffffff',
           '--swiper-pagination-color': '#ff6b9d',
-          '--swiper-pagination-bullet-inactive-color': '#ff6b9d',
-          '--swiper-pagination-bullet-inactive-opacity': '0.25',
-          height: '100%', // ✅ Take full container height
+          '--swiper-pagination-bullet-inactive-color': '#ffffff',
+          '--swiper-pagination-bullet-inactive-opacity': '0.5',
+          height: '100%',
         }}
       >
         {SLIDES_DATA.map((slide) => (
-            <SwiperSlide 
-              key={slide.id}
-              className="elementor-repeater-item-c8a489e"
-              style={{
-                aspectRatio: '4 / 3',  // ✅ Modern CSS - cleaner than padding hack
-                width: '100%',
-              }}
-            >
+          <SwiperSlide key={slide.id}>
+            <div className={styles.slideWrapper}>
+              {/* Background Image with Parallax */}
               <div 
-                className="swiper-slide-inner"
+                className={styles.slideBackground}
+                data-swiper-parallax="-23%"
                 style={{
-                  position: 'relative',
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: '1rem',
-                  overflow: 'hidden',
+                  backgroundImage: `url(${slide.image})`,
                 }}
               >
-                <div
-                  className="swiper-slide-bg"
-                  style={{
-                    backgroundImage: `url(${slide.image})`,
-                    backgroundColor: '#FFF5EE',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                  }}
-                />
-                {slide.priority === 'high' && (
-                  <link
-                    rel="preload"
-                    as="image"
-                    href={slide.image}
-                    fetchpriority="high"
-                  />
-                )}
-                <div className="swiper-slide-contents" />
+                {/* Gradient Overlay */}
+                <div className={styles.gradientOverlay} />
               </div>
-            </SwiperSlide>
-          ))}
+
+              {/* Preload for priority images */}
+              {slide.priority === 'high' && (
+                <link
+                  rel="preload"
+                  as="image"
+                  href={slide.image}
+                  fetchpriority="high"
+                />
+              )}
+
+              {/* Content Overlay */}
+              <div className={styles.slideContent}>
+                <div className={styles.contentInner}>
+                  {/* Headline with Parallax */}
+                  <h2 
+                    className={`${styles.headline} ${slide.theme === 'light' ? styles.textLight : styles.textDark}`}
+                    data-swiper-parallax="-300"
+                    data-swiper-parallax-opacity="0"
+                  >
+                    {slide.headline}
+                  </h2>
+
+                  {/* Subline with Parallax */}
+                  <p 
+                    className={`${styles.subline} ${slide.theme === 'light' ? styles.textLight : styles.textDark}`}
+                    data-swiper-parallax="-200"
+                    data-swiper-parallax-opacity="0"
+                  >
+                    {slide.subline}
+                  </p>
+
+                  {/* CTA Button with Parallax */}
+                  <a 
+                    href={slide.ctaLink}
+                    className={styles.ctaButton}
+                    data-swiper-parallax="-100"
+                    data-swiper-parallax-opacity="0"
+                  >
+                    {slide.ctaText}
+                    <svg 
+                      className={styles.ctaIcon} 
+                      width="20" 
+                      height="20" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2.5" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
       </Swiper>
 
-      {/* ✅ Custom Pagination Element - Outside Swiper */}
+      {/* Custom Pagination */}
       <div 
         className={`${styles.customPagination} featured-pagination-dots`}
         ref={paginationRef}
