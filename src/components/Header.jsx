@@ -7,14 +7,37 @@ import './AnimatedLogo.css'; // <-- الخطوة 2: استدعاء ملف الأ
  * Header Component
  * Main navigation header with animated logo, cart, and language switcher
  */
+/**
+ * Header Component
+ * Main navigation header with animated logo, cart, and language switcher
+ */
 const Header = ({ 
   onOpenSidebar, 
   onOpenCart, 
+  // الخطوة 4: شيلنا onToggleTheme و theme من الـ props
   onToggleLanguage, 
   language, 
   cartCount 
-  // <-- الخطوة 3: شيلنا onToggleTheme و theme من هنا
 }) => {
+
+  // الخطوة 5 (مهمة): إصلاح خطأ Error #62
+  // الكود دا بيتحقق لو cartCount مجرد رقم، أو أوبجكت
+  // وفي كل الحالات بيطلع "العدد" الصح
+  const getCartCount = () => {
+    if (typeof cartCount === 'number') {
+      return cartCount; // لو هو رقم، اعرضه زي ما هو
+    }
+    if (cartCount && cartCount.items && Array.isArray(cartCount.items)) {
+      return cartCount.items.length; // لو هو أوبجكت، هات عدد الأيتمز
+    }
+    if (cartCount && typeof cartCount.total === 'number') {
+      return cartCount.total; // أو هات التوتال لو موجود
+    }
+    return 0; // لو أي حاجة تانية، رجع صفر
+  };
+  
+  const displayCount = getCartCount();
+
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
       <div className="container mx-auto px-4 py-4">
@@ -28,21 +51,17 @@ const Header = ({
             <Menu className="w-6 h-6" />
           </button>
 
-          {/* --- الخطوة 4: تم استبدال اللوجو النصي باللوجو المتحرك --- */}
+          {/* الخطوة 6: استبدال اللوجو النصي باللوجو المتحرك */}
           <div className="flex-1 flex justify-center items-center">
-            {/* الـ div دا بيتحكم في حجم اللوجو عشان يتجاوب مع الموبايل 
-              h-14 = ارتفاع 56 بكسل. w-auto = العرض أوتوماتيك
-            */}
-            <div className="w-auto h-14">
+            <div className="w-auto h-14"> {/* اتحكم في ارتفاع اللوجو من هنا */}
               <AnimatedLogo />
             </div>
           </div>
-          {/* --- نهاية جزء اللوجو --- */}
           
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
             
-            {/* --- الخطوة 5: تم حذف زرار Dark Mode Toggle --- */}
+            {/* الخطوة 7: تم حذف زرار Dark Mode Toggle بالكامل */}
 
             {/* Language Toggle */}
             <button
@@ -62,9 +81,11 @@ const Header = ({
               aria-label="Open cart"
             >
               <ShoppingCart className="w-6 h-6" />
-              {cartCount > 0 && (
+              
+              {/* الخطوة 8: استخدام المتغير displayCount اللي صلحناه فوق */}
+              {displayCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                  {cartCount}
+                  {displayCount}
                 </span>
               )}
             </button>
