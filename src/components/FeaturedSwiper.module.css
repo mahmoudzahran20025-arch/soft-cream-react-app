@@ -89,17 +89,22 @@
   width: 100%;
   height: 500px; /* Mobile - Hero height */
   position: relative;
-  overflow: hidden;
+  padding: 1rem 0;
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.03) 0%, rgba(255, 139, 171, 0.05) 100%);
+  border-radius: 2rem;
+  overflow: visible; /* لإظهار الظلال */
 }
 
 .heroSwiper {
   width: 100%;
   height: 100%;
   display: block;
+  padding: 1rem 0;
 }
 
 .heroSwiper :global(.swiper-wrapper) {
   height: 100%;
+  align-items: center;
 }
 
 /* ========================================
@@ -111,6 +116,12 @@
   height: 100%;
   overflow: hidden;
   border-radius: 1.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 107, 157, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
 }
 
 .slideBackground {
@@ -125,7 +136,7 @@
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Gradient Overlay - Bottom to Top */
+/* Gradient Overlay - موحد للجميع */
 .gradientOverlay {
   position: absolute;
   bottom: 0;
@@ -134,9 +145,9 @@
   height: 100%;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.75) 0%,
-    rgba(0, 0, 0, 0.4) 40%,
-    rgba(0, 0, 0, 0.2) 70%,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.5) 40%,
+    rgba(0, 0, 0, 0.25) 70%,
     transparent 100%
   );
   z-index: 1;
@@ -185,14 +196,19 @@
   animation: fadeInUp 0.6s ease-out 0.4s both;
 }
 
-/* Text Color Themes */
+/* Text Color Themes - موحدة */
 .textLight {
   color: #ffffff;
+  text-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .textDark {
-  color: #1a1a1a;
-  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.5);
+  color: #ffffff;
+  text-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* ========================================
@@ -307,18 +323,40 @@
  * ======================================== */
 .heroSwiper :global(.swiper-slide) {
   border-radius: 1.5rem;
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+}
+
+/* Active Slide - مميز */
+.heroSwiper :global(.swiper-slide-active) .slideWrapper {
+  box-shadow: 
+    0 20px 60px rgba(255, 107, 157, 0.3),
+    0 0 0 2px rgba(255, 107, 157, 0.2);
+  transform: scale(1);
 }
 
 .heroSwiper :global(.swiper-slide-active) .slideBackground {
-  transform: scale(1.05);
+  transform: scale(1.03);
+}
+
+/* Non-Active Slides - ظلال خفيفة */
+.heroSwiper :global(.swiper-slide):not(.swiper-slide-active) .slideWrapper {
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
 }
 
 /* Hover Effect on Desktop */
 @media (min-width: 1024px) {
+  .slideWrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+      0 25px 70px rgba(255, 107, 157, 0.35),
+      0 0 0 2px rgba(255, 107, 157, 0.3);
+  }
+  
   .slideWrapper:hover .slideBackground {
-    transform: scale(1.08);
+    transform: scale(1.05);
   }
   
   .slideWrapper:hover .ctaButton {
@@ -385,67 +423,94 @@
 }
 
 /* ========================================
- * CUSTOM PAGINATION
+ * CUSTOM PAGINATION - واضح ومميز
  * ======================================== */
 .customPagination {
   position: relative !important;
   width: 100% !important;
-  margin-top: 1.5rem !important;
-  height: 40px !important;
+  margin-top: 2rem !important;
+  height: 50px !important;
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 10px !important;
+  gap: 12px !important;
   top: auto !important;
   bottom: auto !important;
   left: auto !important;
   right: auto !important;
   z-index: 10 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 50px !important;
+  padding: 0.75rem 1.5rem !important;
+  width: fit-content !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
 div.customPagination.featured-pagination-dots :global(.swiper-pagination-bullet) {
-  width: 10px !important;
-  height: 10px !important;
+  width: 12px !important;
+  height: 12px !important;
   border-radius: 50% !important;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  background: var(--swiper-pagination-bullet-inactive-color, #ffffff) !important;
-  opacity: var(--swiper-pagination-bullet-inactive-opacity, 0.5) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: rgba(255, 107, 157, 0.3) !important;
+  opacity: 1 !important;
   margin: 0 !important;
   cursor: pointer !important;
-  border: 2px solid transparent !important;
+  border: 2px solid rgba(255, 107, 157, 0.2) !important;
+  position: relative !important;
 }
 
 div.customPagination.featured-pagination-dots :global(.swiper-pagination-bullet):hover {
-  opacity: 0.8 !important;
-  transform: scale(1.2) !important;
+  background: rgba(255, 107, 157, 0.5) !important;
+  transform: scale(1.3) !important;
+  border-color: rgba(255, 107, 157, 0.4) !important;
 }
 
 div.customPagination.featured-pagination-dots :global(.swiper-pagination-bullet-active) {
-  width: 32px !important;
-  height: 10px !important;
-  border-radius: 5px !important;
-  background: var(--swiper-pagination-color, #ff6b9d) !important;
+  width: 40px !important;
+  height: 12px !important;
+  border-radius: 6px !important;
+  background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%) !important;
   opacity: 1 !important;
-  border: 2px solid rgba(255, 107, 157, 0.3) !important;
-  box-shadow: 0 2px 8px rgba(255, 107, 157, 0.4) !important;
+  border: 2px solid rgba(255, 107, 157, 0.5) !important;
+  box-shadow: 
+    0 0 20px rgba(255, 107, 157, 0.6),
+    0 4px 12px rgba(255, 107, 157, 0.4) !important;
+  animation: paginationGlow 2s ease-in-out infinite !important;
+}
+
+@keyframes paginationGlow {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(255, 107, 157, 0.6),
+      0 4px 12px rgba(255, 107, 157, 0.4);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(255, 107, 157, 0.8),
+      0 6px 16px rgba(255, 107, 157, 0.5);
+  }
 }
 
 @media (max-width: 767px) {
   .customPagination {
-    margin-top: 1rem !important;
-    height: 32px !important;
-    gap: 8px !important;
+    margin-top: 1.5rem !important;
+    height: 40px !important;
+    gap: 10px !important;
+    padding: 0.5rem 1rem !important;
   }
 
   div.customPagination.featured-pagination-dots :global(.swiper-pagination-bullet) {
-    width: 8px !important;
-    height: 8px !important;
+    width: 10px !important;
+    height: 10px !important;
   }
 
   div.customPagination.featured-pagination-dots :global(.swiper-pagination-bullet-active) {
-    width: 24px !important;
-    height: 8px !important;
+    width: 32px !important;
+    height: 10px !important;
   }
 }
 

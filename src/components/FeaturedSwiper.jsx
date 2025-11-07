@@ -116,13 +116,15 @@ const FeaturedSwiper = () => {
   const swiperConfig = {
     modules: [Navigation, Pagination, Autoplay],
     loop: true,
-    speed: 800,
+    speed: 900,
     direction: 'horizontal',
     watchSlidesProgress: true,
     allowTouchMove: true,
+    centeredSlides: true,
+    grabCursor: true,
     
     autoplay: {
-      delay: 5000, // 5 seconds per slide
+      delay: 4500,
       disableOnInteraction: false,
       pauseOnMouseEnter: true,
     },
@@ -136,28 +138,64 @@ const FeaturedSwiper = () => {
     
     navigation: true,
     
-    slidesPerView: 1, // Full-width hero slides on mobile
+    // Mobile: 1 slide + 20% peek من الجانبين
+    slidesPerView: 1.4,
     slidesPerGroup: 1,
-    spaceBetween: 0,
-    centeredSlides: true,
+    spaceBetween: 20,
     
     breakpoints: {
-      768: {
-        slidesPerView: 1.15, // Slight peek on tablet
-        spaceBetween: 20,
-      },
-      1024: {
-        slidesPerView: 1.3, // Peek style on desktop
+      640: {
+        slidesPerView: 1.5,
         spaceBetween: 24,
       },
-      1440: {
-        slidesPerView: 1.4,
+      768: {
+        slidesPerView: 1.6,
+        spaceBetween: 28,
+      },
+      1024: {
+        slidesPerView: 2.4, // 2 slides + 20% peek
         spaceBetween: 32,
+      },
+      1280: {
+        slidesPerView: 2.5,
+        spaceBetween: 36,
+      },
+      1536: {
+        slidesPerView: 2.6,
+        spaceBetween: 40,
       },
     },
     
     onInit: (swiper) => {
       console.log('✅ Hero Swiper initialized:', swiper.slides.length, 'slides');
+    },
+    
+    onSlideChange: (swiper) => {
+      // Add scale effect to active slide
+      swiper.slides.forEach((slide, index) => {
+        if (index === swiper.activeIndex) {
+          slide.style.transform = 'scale(1)';
+          slide.style.opacity = '1';
+          slide.style.filter = 'brightness(1)';
+        } else {
+          slide.style.transform = 'scale(0.92)';
+          slide.style.opacity = '0.7';
+          slide.style.filter = 'brightness(0.8)';
+        }
+      });
+    },
+    
+    onProgress: (swiper) => {
+      swiper.slides.forEach((slide) => {
+        const progress = Math.abs(slide.progress);
+        const scale = 1 - Math.min(progress * 0.08, 0.08);
+        const opacity = 1 - Math.min(progress * 0.3, 0.3);
+        const brightness = 1 - Math.min(progress * 0.2, 0.2);
+        
+        slide.style.transform = `scale(${scale})`;
+        slide.style.opacity = opacity;
+        slide.style.filter = `brightness(${brightness})`;
+      });
     },
   };
 
