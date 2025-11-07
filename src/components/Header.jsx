@@ -1,12 +1,12 @@
 import React from 'react';
-import { ShoppingCart, Menu, Globe } from 'lucide-react'; // <-- شيلنا Moon و Sun لأننا مش محتاجينهم
-import { AnimatedLogo } from './AnimatedLogo'; // <-- الخطوة 1: استدعاء اللوجو
-import './AnimatedLogo.css'; // <-- الخطوة 2: استدعاء ملف الأنيميشن
+import { ShoppingCart, Menu, Globe } from 'lucide-react';
+// 
+// 💡💡 ((  الحــــــــــل هنــــــــــا )) 💡💡
+// شيلنا الأقواس من حوالين AnimatedLogo
+//
+import AnimatedLogo from './AnimatedLogo'; // <-- تم تصحيح السطر دا
+import './AnimatedLogo.css'; 
 
-/**
- * Header Component
- * Main navigation header with animated logo, cart, and language switcher
- */
 /**
  * Header Component
  * Main navigation header with animated logo, cart, and language switcher
@@ -14,26 +14,23 @@ import './AnimatedLogo.css'; // <-- الخطوة 2: استدعاء ملف الأ
 const Header = ({ 
   onOpenSidebar, 
   onOpenCart, 
-  // الخطوة 4: شيلنا onToggleTheme و theme من الـ props
   onToggleLanguage, 
   language, 
   cartCount 
 }) => {
 
-  // الخطوة 5 (مهمة): إصلاح خطأ Error #62
-  // الكود دا بيتحقق لو cartCount مجرد رقم، أو أوبجكت
-  // وفي كل الحالات بيطلع "العدد" الصح
+  // الكود دا بيصلح خطأ Error #62 (بتاع cartCount)
   const getCartCount = () => {
     if (typeof cartCount === 'number') {
-      return cartCount; // لو هو رقم، اعرضه زي ما هو
+      return cartCount; 
     }
     if (cartCount && cartCount.items && Array.isArray(cartCount.items)) {
-      return cartCount.items.length; // لو هو أوبجكت، هات عدد الأيتمز
+      return cartCount.items.length; 
     }
     if (cartCount && typeof cartCount.total === 'number') {
-      return cartCount.total; // أو هات التوتال لو موجود
+      return cartCount.total; 
     }
-    return 0; // لو أي حاجة تانية، رجع صفر
+    return 0; 
   };
   
   const displayCount = getCartCount();
@@ -51,9 +48,9 @@ const Header = ({
             <Menu className="w-6 h-6" />
           </button>
 
-          {/* الخطوة 6: استبدال اللوجو النصي باللوجو المتحرك */}
+          {/* اللوجو المتحرك */}
           <div className="flex-1 flex justify-center items-center">
-            <div className="w-auto h-14"> {/* اتحكم في ارتفاع اللوجو من هنا */}
+            <div className="w-auto h-14">
               <AnimatedLogo />
             </div>
           </div>
@@ -61,7 +58,7 @@ const Header = ({
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
             
-            {/* الخطوة 7: تم حذف زرار Dark Mode Toggle بالكامل */}
+            {/* تم حذف زرار الثيم */}
 
             {/* Language Toggle */}
             <button
@@ -82,7 +79,6 @@ const Header = ({
             >
               <ShoppingCart className="w-6 h-6" />
               
-              {/* الخطوة 8: استخدام المتغير displayCount اللي صلحناه فوق */}
               {displayCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
                   {displayCount}
