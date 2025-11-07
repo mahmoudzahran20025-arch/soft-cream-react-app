@@ -117,8 +117,8 @@ const FeaturedSwiper = () => {
     modules: [Navigation, Pagination, Autoplay],
     loop: true,
     speed: 800,
-    direction: 'ltr',
-    autoHeight: false,
+    direction: 'horizontal',
+    watchSlidesProgress: true,
     allowTouchMove: true,
     
     autoplay: {
@@ -179,7 +179,7 @@ const FeaturedSwiper = () => {
         }}
       >
         {SLIDES_DATA.map((slide) => (
-          <SwiperSlide key={slide.id}>
+          <SwiperSlide key={slide.id} style={{ height: '100%' }}>
             <div className={styles.slideWrapper}>
               {/* Background Image */}
               <div 

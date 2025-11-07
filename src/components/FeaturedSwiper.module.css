@@ -98,6 +98,10 @@
   display: block;
 }
 
+.heroSwiper :global(.swiper-wrapper) {
+  height: 100%;
+}
+
 /* ========================================
  * SLIDE STRUCTURE
  * ======================================== */
