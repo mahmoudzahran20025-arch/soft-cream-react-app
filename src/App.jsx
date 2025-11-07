@@ -78,7 +78,7 @@ function AppContent() {
         <FilterBar />
 
         {/* Main Content */}
-        <main className="container mx-auto px-4 py-8">
+        <main id="products" className="container mx-auto px-4 py-8">
           <ProductsGrid onAddToCart={addToCart} />
         </main>
 

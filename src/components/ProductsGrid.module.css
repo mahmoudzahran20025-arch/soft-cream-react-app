@@ -23,18 +23,30 @@
 }
 
 .productsSwiper :global(.swiper-pagination-bullet) {
-  width: 6px !important;
-  height: 6px !important;
-  background: #ff6b9d !important;
-  opacity: 0.3 !important;
-  transition: all 0.3s ease !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 107, 157, 0.25) !important;
+  opacity: 1 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: 1px solid rgba(255, 107, 157, 0.15) !important;
+  cursor: pointer !important;
+}
+
+.productsSwiper :global(.swiper-pagination-bullet):hover {
+  background: rgba(255, 107, 157, 0.4) !important;
+  transform: scale(1.2) !important;
 }
 
 .productsSwiper :global(.swiper-pagination-bullet-active) {
-  width: 8px !important;
+  width: 24px !important;
   height: 8px !important;
+  border-radius: 4px !important;
+  background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%) !important;
   opacity: 1 !important;
-  transform: scale(1.2) !important;
+  transform: scale(1) !important;
+  border: 1px solid rgba(255, 107, 157, 0.3) !important;
+  box-shadow: 0 0 12px rgba(255, 107, 157, 0.5) !important;
 }
 
 /* ========================================

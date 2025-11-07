@@ -3,6 +3,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import styles from './FeaturedSwiper.module.css';
 
+// TODO: Analytics Integration
+// Uncomment when ready to connect analytics
+// import { trackEvent } from '../utils/analytics';
+
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -24,8 +28,9 @@ const SLIDES_DATA = [
     headline: 'تجربة مميزة',
     subline: 'اكتشف عالماً من النكهات الفريدة',
     ctaText: 'تسوق الآن',
-    ctaLink: '#shop',
-    theme: 'light', // light or dark text
+    ctaLink: '#products', // TODO: Link to products section
+    category: null, // TODO: Set category to filter products
+    theme: 'light',
   },
   {
     id: 2,
@@ -34,7 +39,8 @@ const SLIDES_DATA = [
     headline: 'جودة استثنائية',
     subline: 'منتجات طازجة يومياً من أجود المكونات',
     ctaText: 'اكتشف المزيد',
-    ctaLink: '#discover',
+    ctaLink: '#products',
+    category: null, // TODO: Set to specific category
     theme: 'dark',
   },
   {
@@ -43,7 +49,8 @@ const SLIDES_DATA = [
     headline: 'عروض حصرية',
     subline: 'خصومات تصل إلى 30% على مجموعة مختارة',
     ctaText: 'استفد الآن',
-    ctaLink: '#offers',
+    ctaLink: '#products',
+    category: null, // TODO: Filter by discount/offers
     theme: 'light',
   },
   {
@@ -168,6 +175,9 @@ const FeaturedSwiper = () => {
     
     onInit: (swiper) => {
       console.log('✅ Hero Swiper initialized:', swiper.slides.length, 'slides');
+      
+      // TODO: Analytics - Track swiper initialization
+      // trackEvent('hero_swiper_init', { slides_count: swiper.slides.length });
     },
     
     onSlideChange: (swiper) => {
@@ -183,6 +193,13 @@ const FeaturedSwiper = () => {
           slide.style.filter = 'brightness(0.8)';
         }
       });
+      
+      // TODO: Analytics - Track slide change
+      // const slideData = SLIDES_DATA[swiper.realIndex];
+      // trackEvent('hero_slide_view', { 
+      //   slide_id: slideData?.id,
+      //   slide_title: slideData?.headline 
+      // });
     },
     
     onProgress: (swiper) => {
@@ -261,6 +278,21 @@ const FeaturedSwiper = () => {
                   <a 
                     href={slide.ctaLink}
                     className={styles.ctaButton}
+                    onClick={(e) => {
+                      // TODO: Analytics - Track CTA click
+                      // trackEvent('hero_cta_click', {
+                      //   slide_id: slide.id,
+                      //   cta_text: slide.ctaText,
+                      //   category: slide.category
+                      // });
+                      
+                      // TODO: Scroll to products section
+                      // if (slide.ctaLink.startsWith('#')) {
+                      //   e.preventDefault();
+                      //   const target = document.querySelector(slide.ctaLink);
+                      //   target?.scrollIntoView({ behavior: 'smooth' });
+                      // }
+                    }}
                   >
                     {slide.ctaText}
                     <svg 
