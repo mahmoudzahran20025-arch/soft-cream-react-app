@@ -1,17 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    // React App files (Self-Contained)
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       // ================================================================
-      // 🎨 COLORS - Single Source of Truth (HEX Values)
+      // 🎨 COLORS - Single Source of Truth
       // ================================================================
       colors: {
-        // Primary Colors (Pink) - من components.css
         primary: {
           DEFAULT: '#FF6B9D',
           dark: '#E85589',
@@ -27,7 +25,6 @@ export default {
           800: '#BA2B61',
           900: '#A3164D',
         },
-        // Secondary Color (Purple) - من components.css
         secondary: {
           DEFAULT: '#C9A0DC',
           50: '#F5EFFA',
@@ -41,7 +38,6 @@ export default {
           800: '#5E2971',
           900: '#421C52',
         },
-        // Accent Color (Mint) - من components.css
         accent: {
           DEFAULT: '#A8E6CF',
           50: '#F0FAF5',
@@ -55,7 +51,6 @@ export default {
           800: '#30A57F',
           900: '#24805F',
         },
-        // Cream Colors - من components.css
         cream: {
           50: '#FFF9F5',
           100: '#FFF5EE',
@@ -68,16 +63,15 @@ export default {
           800: '#FF846F',
           900: '#FF745C',
         },
-        // Energy Colors (للمنتجات) - قيم ثابتة (لا تحتاج CSS Variables)
         energy: {
-          mental: '#8b5cf6',    // Purple for mental energy
-          physical: '#f59e0b',  // Orange for physical energy
-          balanced: '#10b981',  // Green for balanced
+          mental: '#8b5cf6',
+          physical: '#f59e0b',
+          balanced: '#10b981',
         }
       },
       
       // ================================================================
-      // 🔤 FONTS - Migrated from components.css
+      // 📝 FONTS
       // ================================================================
       fontFamily: {
         cairo: ['Cairo', 'sans-serif'],
@@ -87,7 +81,7 @@ export default {
       },
       
       // ================================================================
-      // 📏 Z-INDEX HIERARCHY - Migrated from components.css
+      // 📍 Z-INDEX HIERARCHY
       // ================================================================
       zIndex: {
         'base': '0',
@@ -111,7 +105,7 @@ export default {
       },
       
       // ================================================================
-      // 🎬 ANIMATIONS - Enhanced from components.css
+      // 🎬 ANIMATIONS
       // ================================================================
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in-out',
@@ -119,7 +113,11 @@ export default {
         'scale-in': 'scaleIn 0.2s ease-out',
         'float': 'float 3s ease-in-out infinite',
         'slide-in-right': 'slideInRight 0.3s ease-out',
-        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+        
+        // 🎨 Logo & Brand Animations
+        'pulse-glow': 'pulseGlow 2s ease-in-out infinite alternate',
+        'text-wave-fast': 'textWaveFast 3s ease-in-out infinite',
+        
         'fade-in-up': 'fadeInUp 0.5s ease-out',
         'gentle-pulse': 'gentlePulse 2s ease-in-out infinite',
         'shimmer': 'shimmer 2s infinite',
@@ -131,9 +129,9 @@ export default {
       },
       
       // ================================================================
-      // 🎨 KEYFRAMES - Migrated from components.css
+      // 🎨 KEYFRAMES
       // ================================================================
-      keyframes: {
+      keyframes: (theme) => ({
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
@@ -154,10 +152,41 @@ export default {
           '0%': { transform: 'translateX(50px)', opacity: '0' },
           '100%': { transform: 'translateX(0)', opacity: '1' },
         },
+        
+        // 🌟 Logo Glow Effect - استخدام drop-shadow بدل box-shadow
         pulseGlow: {
-          '0%, 100%': { boxShadow: '0 0 15px rgba(255, 107, 157, 0.3)' },
-          '50%': { boxShadow: '0 0 30px rgba(255, 107, 157, 0.6)' },
+          '0%, 100%': { 
+            filter: `drop-shadow(0 0 10px ${theme('colors.primary.light')})` 
+          },
+          '50%': { 
+            filter: `drop-shadow(0 0 25px ${theme('colors.primary.DEFAULT')})` 
+          },
         },
+        
+        // 🌊⚡ Fast Wave Effect - ميكس من السرعة والموجة
+        textWaveFast: {
+          '0%, 100%': {
+            color: theme('colors.primary.DEFAULT'),
+            transform: 'translateY(0px) scale(1) rotate(0deg)',
+            textShadow: `0 2px 15px ${theme('colors.primary.light')}, 0 0 8px ${theme('colors.primary.DEFAULT')}`
+          },
+          '25%': {
+            color: theme('colors.secondary.300'),
+            transform: 'translateY(-6px) scale(1.15) rotate(-2deg)',
+            textShadow: `0 4px 20px ${theme('colors.secondary.200')}, 0 0 12px ${theme('colors.secondary.DEFAULT')}`
+          },
+          '50%': {
+            color: theme('colors.accent.DEFAULT'),
+            transform: 'translateY(-3px) scale(1.1) rotate(1deg)',
+            textShadow: `0 3px 18px ${theme('colors.accent.200')}, 0 0 10px ${theme('colors.accent.DEFAULT')}`
+          },
+          '75%': {
+            color: theme('colors.primary.light'),
+            transform: 'translateY(-8px) scale(1.2) rotate(-1deg)',
+            textShadow: `0 5px 25px ${theme('colors.primary.DEFAULT')}, 0 0 15px ${theme('colors.primary.light')}`
+          },
+        },
+        
         fadeInUp: {
           'from': { opacity: '0', transform: 'translateY(30px)' },
           'to': { opacity: '1', transform: 'translateY(0)' },
@@ -190,10 +219,10 @@ export default {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.5' },
         },
-      },
+      }),
       
       // ================================================================
-      // 📐 SPACING & LAYOUT
+      // 📏 SPACING & LAYOUT
       // ================================================================
       spacing: {
         'sidebar': '320px',

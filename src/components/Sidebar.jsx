@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useProducts } from '../context/ProductsContext';
 import { useGlobal } from '../context/GlobalProvider';
 import {
-  X, ShoppingCart, Package, Moon, Sun, Globe, Home, Info, Phone, Menu
+  X, ShoppingCart, Package, Moon, Sun, Globe, Info, Phone, Clock, Sparkles
 } from 'lucide-react';
 
 /**
- * Sidebar Component - Pure React Sidebar
+ * Sidebar Component - Enhanced & Matching Design
  * 
- * ✅ Replaces: js/sidebar.js + js/orders-badge.js
- * ✅ Features: Navigation, Language toggle, Theme toggle, Cart badge
+ * ✅ Fixed: Navigation links scroll to sections
+ * ✅ Fixed: Burger button closes sidebar when clicked again
+ * ✅ Enhanced: Matching design with Footer, Cart, Menu
  */
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -28,7 +29,6 @@ const Sidebar = ({ isOpen, onClose }) => {
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      // Prevent body scroll when sidebar is open
       document.body.style.overflow = 'hidden';
     }
 
@@ -38,134 +38,162 @@ const Sidebar = ({ isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
+  // Handle navigation with smooth scroll
+  const handleNavClick = (sectionId) => {
+    onClose(); // Close sidebar first
+    
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }
+    }, 300); // Wait for sidebar to close
+  };
+
   if (!isOpen) return null;
 
   return (
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9000]"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-sidebar-overlay animate-fade-in-overlay"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 ${language === 'ar' ? 'right-0' : 'left-0'} h-full w-80 bg-white dark:bg-gray-800 shadow-2xl z-[9001] transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : language === 'ar' ? 'translate-x-full' : '-translate-x-full'
-        }`}
+        className={`fixed top-0 ${language === 'ar' ? 'right-0 animate-slide-in-right-sidebar' : 'left-0 animate-slide-in-left-sidebar'} h-full w-80 bg-white dark:bg-gray-800 shadow-2xl z-sidebar`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="sidebar-title"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center text-white shadow-lg">
-              <Menu className="w-6 h-6" />
+        {/* Header - Enhanced Design */}
+        <div className="p-6 bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 border-b border-pink-100 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center text-white shadow-md">
+                <img 
+                  src="https://i.ibb.co/GfqnJKpV/softcreamlogo.png"
+                  alt="Logo" 
+                  className="w-8 h-8 object-contain" 
+                />
+              </div>
+              <div>
+                <h2 id="sidebar-title" className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                  {t('headerTitle') || 'سوفت كريم'}
+                </h2>
+                <p className="text-sm text-primary font-medium">
+                  {t('headerSubtitle') || 'أطيب آيس كريم 🍦'}
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 id="sidebar-title" className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                {t('headerTitle') || 'سوفت كريم'}
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t('headerSubtitle') || 'أطيب آيس كريم 🍦'}
-              </p>
-            </div>
+            <button
+              onClick={onClose}
+              className="w-10 h-10 rounded-full bg-white dark:bg-gray-700 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all duration-300 hover:rotate-90 shadow-md"
+              aria-label={t('closeSidebar') || 'Close sidebar'}
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all duration-300 hover:rotate-90"
-            aria-label={t('closeSidebar') || 'Close sidebar'}
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="p-6 space-y-2">
+        {/* Navigation - Enhanced Design */}
+        <nav className="p-6 space-y-2 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 280px)' }}>
           {/* Menu Link */}
-          <a
-            href="#menu"
-            className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
-            onClick={onClose}
+          <button
+            onClick={() => handleNavClick('menu')}
+            className="w-full flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-700 dark:to-gray-800 hover:from-primary hover:to-secondary hover:text-white transition-all duration-300 group shadow-sm border border-pink-100 dark:border-gray-600"
           >
-            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-              <Package className="w-5 h-5 text-primary group-hover:text-white" />
+            <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-colors shadow-sm">
+              <Package className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
             </div>
-            <span className="text-base font-semibold text-gray-700 dark:text-gray-300">
+            <span className="text-base font-semibold text-gray-700 dark:text-gray-300 group-hover:text-white">
               {t('navMenu') || 'المنيو'}
             </span>
-          </a>
+          </button>
 
           {/* Cart Link */}
-          <a
-            href="#cart"
-            className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group relative"
-            onClick={(e) => {
-              e.preventDefault();
+          <button
+            onClick={() => {
               onClose();
-              // Dispatch event to open cart
-              window.dispatchEvent(new Event('open-react-cart'));
+              setTimeout(() => {
+                window.dispatchEvent(new Event('open-react-cart'));
+              }, 300);
             }}
+            className="w-full flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-700 dark:to-gray-800 hover:from-primary hover:to-secondary hover:text-white transition-all duration-300 group relative shadow-sm border border-green-100 dark:border-gray-600"
           >
-            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-              <ShoppingCart className="w-5 h-5 text-primary group-hover:text-white" />
+            <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-colors shadow-sm">
+              <ShoppingCart className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
             </div>
-            <span className="text-base font-semibold text-gray-700 dark:text-gray-300">
+            <span className="text-base font-semibold text-gray-700 dark:text-gray-300 group-hover:text-white">
               {t('navCart') || 'السلة'}
             </span>
             {cartCount > 0 && (
-              <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+              <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg animate-gentle-pulse">
                 {cartCount}
               </span>
             )}
-          </a>
+          </button>
 
-          {/* About Link */}
-          <a
-            href="#about"
-            className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
-            onClick={onClose}
+          {/* Hours Link */}
+          <button
+            onClick={() => handleNavClick('footer-hours')}
+            className="w-full flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-800 hover:from-primary hover:to-secondary hover:text-white transition-all duration-300 group shadow-sm border border-blue-100 dark:border-gray-600"
           >
-            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-              <Info className="w-5 h-5 text-primary group-hover:text-white" />
+            <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-colors shadow-sm">
+              <Clock className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
             </div>
-            <span className="text-base font-semibold text-gray-700 dark:text-gray-300">
-              {t('navAbout') || 'من نحن'}
+            <span className="text-base font-semibold text-gray-700 dark:text-gray-300 group-hover:text-white">
+              {t('footerNavHours') || 'ساعات العمل'}
             </span>
-          </a>
+          </button>
+
+          {/* Health Info Link */}
+          <button
+            onClick={() => handleNavClick('footer-health-info')}
+            className="w-full flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-800 hover:from-primary hover:to-secondary hover:text-white transition-all duration-300 group shadow-sm border border-purple-100 dark:border-gray-600"
+          >
+            <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-colors shadow-sm">
+              <Sparkles className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
+            </div>
+            <span className="text-base font-semibold text-gray-700 dark:text-gray-300 group-hover:text-white">
+              {t('footerNavHealthy') || 'معلومات صحية'}
+            </span>
+          </button>
 
           {/* Contact Link */}
-          <a
-            href="#contact"
-            className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
-            onClick={onClose}
+          <button
+            onClick={() => handleNavClick('footer-contact')}
+            className="w-full flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-700 dark:to-gray-800 hover:from-primary hover:to-secondary hover:text-white transition-all duration-300 group shadow-sm border border-orange-100 dark:border-gray-600"
           >
-            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-              <Phone className="w-5 h-5 text-primary group-hover:text-white" />
+            <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-colors shadow-sm">
+              <Phone className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
             </div>
-            <span className="text-base font-semibold text-gray-700 dark:text-gray-300">
-              {t('navContact') || 'تواصل'}
+            <span className="text-base font-semibold text-gray-700 dark:text-gray-300 group-hover:text-white">
+              {t('footerNavContact') || 'تواصل معنا'}
             </span>
-          </a>
+          </button>
         </nav>
 
-        {/* Settings */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+        {/* Settings - Enhanced Design */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-pink-100 dark:border-gray-700 bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
           <div className="space-y-3">
             {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
-              className="w-full flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors shadow-sm"
+              className="w-full flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-800 hover:bg-gradient-to-br hover:from-primary hover:to-secondary hover:text-white transition-all duration-300 shadow-sm border border-pink-100 dark:border-gray-700 group"
             >
               <div className="flex items-center gap-3">
-                <Globe className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <Globe className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-white">
                   {t('languageLabel') || 'اللغة'}
                 </span>
               </div>
-              <span className="text-sm font-bold text-primary">
+              <span className="text-sm font-bold text-primary group-hover:text-white">
                 {language === 'ar' ? 'English' : 'العربية'}
               </span>
             </button>
@@ -173,19 +201,19 @@ const Sidebar = ({ isOpen, onClose }) => {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="w-full flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors shadow-sm"
+              className="w-full flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-800 hover:bg-gradient-to-br hover:from-primary hover:to-secondary hover:text-white transition-all duration-300 shadow-sm border border-pink-100 dark:border-gray-700 group"
             >
               <div className="flex items-center gap-3">
                 {theme === 'light' ? (
-                  <Moon className="w-5 h-5 text-primary" />
+                  <Moon className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
                 ) : (
-                  <Sun className="w-5 h-5 text-primary" />
+                  <Sun className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
                 )}
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-white">
                   {t('themeLabel') || 'المظهر'}
                 </span>
               </div>
-              <span className="text-sm font-bold text-primary">
+              <span className="text-sm font-bold text-primary group-hover:text-white">
                 {theme === 'light' ? (t('darkMode') || 'ليلي') : (t('lightMode') || 'نهاري')}
               </span>
             </button>
