@@ -12,10 +12,10 @@ const CATEGORIES = [
 ];
 
 const ENERGY_TYPES = [
-  { value: null, label: 'كل الأنواع', icon: null },
-  { value: 'mental', label: 'ذهنية', icon: Brain, color: 'purple' },
-  { value: 'physical', label: 'بدنية', icon: Activity, color: 'orange' },
-  { value: 'balanced', label: 'متوازنة', icon: Zap, color: 'green' }
+  { value: null, label: 'كل الأنواع', icon: null, activeClass: 'bg-gray-500' },
+  { value: 'mental', label: 'ذهنية', icon: Brain, activeClass: 'bg-purple-500' },
+  { value: 'physical', label: 'بدنية', icon: Activity, activeClass: 'bg-orange-500' },
+  { value: 'balanced', label: 'متوازنة', icon: Zap, activeClass: 'bg-green-500' }
 ];
 
 const CALORIE_RANGES = [
@@ -198,14 +198,15 @@ const FilterBar = () => {
               <div className="flex flex-wrap gap-2">
                 {ENERGY_TYPES.map(type => {
                   const Icon = type.icon;
+                  const isActive = localFilters.energyType === type.value;
                   return (
                     <button
                       key={type.value || 'all'}
                       onClick={() => handleFilterChange('energyType', type.value)}
                       className={`
                         flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
-                        ${localFilters.energyType === type.value
-                          ? `bg-${type.color}-500 text-white shadow-md`
+                        ${isActive
+                          ? `${type.activeClass} text-white shadow-md`
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }
                       `}

@@ -1,23 +1,95 @@
 import React, { useState, useEffect } from 'react';
 import { useProducts } from '../context/ProductsContext';
 import { useGlobal } from '../context/GlobalProvider';
+import { storage } from '../services/storage';
 import {
-  X, ShoppingCart, Package, Moon, Sun, Globe, Info, Phone, Clock, Sparkles
+  X, ShoppingCart, Package, Moon, Sun, Globe, Phone, Clock, Sparkles, 
+  ShoppingBag, User, Award
 } from 'lucide-react';
 
 /**
- * Sidebar Component - Enhanced & Matching Design
+ * Sidebar Component - Enhanced & Complete
  * 
- * ✅ Fixed: Navigation links scroll to sections
- * ✅ Fixed: Burger button closes sidebar when clicked again
- * ✅ Enhanced: Matching design with Footer, Cart, Menu
+ * ✅ Welcome message with user name
+ * ✅ Active orders badge on "My Orders" button
+ * ✅ Auto-check orders on click (toast if empty)
+ * ✅ Navigation links scroll to sections
+ * ✅ Global control functions
  */
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { getCartCount } = useProducts();
   const { language, toggleLanguage, theme, toggleTheme, t } = useGlobal();
   
+  const [userData, setUserData] = useState(null);
+  const [activeOrdersCount, setActiveOrdersCount] = useState(0);
+  
   const cartCount = getCartCount();
+
+  // Load user data and orders count
+  useEffect(() => {
+    updateUserData();
+    updateOrdersCount();
+  }, []);
+
+  // Listen for orders updates
+  useEffect(() => {
+    const handleOrdersUpdated = () => {
+      updateOrdersCount();
+    };
+
+    window.addEventListener('ordersUpdated', handleOrdersUpdated);
+    
+    return () => {
+      window.removeEventListener('ordersUpdated', handleOrdersUpdated);
+    };
+  }, []);
+
+  // Listen for user data updates
+  useEffect(() => {
+    const handleUserDataUpdated = () => {
+      updateUserData();
+    };
+
+    window.addEventListener('userDataUpdated', handleUserDataUpdated);
+    
+    return () => {
+      window.removeEventListener('userDataUpdated', handleUserDataUpdated);
+    };
+  }, []);
+
+  const updateUserData = () => {
+    const data = storage.getUserData();
+    setUserData(data);
+  };
+
+  const updateOrdersCount = () => {
+    const count = storage.getActiveOrdersCount();
+    setActiveOrdersCount(count);
+  };
+
+  // Handle Orders button click
+  const handleOrdersClick = () => {
+    onClose();
+    
+    setTimeout(() => {
+      const allOrders = storage.getOrders();
+      
+      if (allOrders.length === 0) {
+        // Show toast: No orders
+        const toastEvent = new CustomEvent('show-toast', {
+          detail: {
+            message: language === 'ar' ? 'لا توجد طلبات سابقة' : 'No previous orders',
+            type: 'info'
+          }
+        });
+        window.dispatchEvent(toastEvent);
+      } else {
+        // Open OrdersBadge modal
+        window.dispatchEvent(new Event('open-my-orders-modal'));
+      }
+    }, 300);
+  };
 
   // Close sidebar on escape key
   useEffect(() => {
@@ -40,7 +112,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   // Handle navigation with smooth scroll
   const handleNavClick = (sectionId) => {
-    onClose(); // Close sidebar first
+    onClose();
     
     setTimeout(() => {
       const element = document.getElementById(sectionId);
@@ -50,7 +122,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           block: 'start' 
         });
       }
-    }, 300); // Wait for sidebar to close
+    }, 300);
   };
 
   if (!isOpen) return null;
@@ -87,7 +159,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                   {t('headerTitle') || 'سوفت كريم'}
                 </h2>
                 <p className="text-sm text-primary font-medium">
-                  {t('headerSubtitle') || 'أطيب آيس كريم 🍦'}
+                  {t('headerSubtitle') || 'أطيب آيس كريم 🦄'}
                 </p>
               </div>
             </div>
@@ -99,6 +171,26 @@ const Sidebar = ({ isOpen, onClose }) => {
               <X className="w-5 h-5" />
             </button>
           </div>
+
+          {/* Welcome Message */}
+          {userData && userData.name && (
+            <div className="mt-3 p-4 bg-white/50 dark:bg-gray-700/50 rounded-xl backdrop-blur-sm border border-pink-200 dark:border-gray-600">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white shadow-md">
+                  <User className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                    {language === 'ar' ? 'مرحباً بك' : 'Welcome'}
+                  </p>
+                  <p className="text-sm font-bold text-gray-800 dark:text-gray-100 truncate">
+                    {userData.name}
+                  </p>
+                </div>
+                <Award className="w-5 h-5 text-yellow-500 animate-pulse" />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Navigation - Enhanced Design */}
@@ -135,6 +227,24 @@ const Sidebar = ({ isOpen, onClose }) => {
             {cartCount > 0 && (
               <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg animate-gentle-pulse">
                 {cartCount}
+              </span>
+            )}
+          </button>
+
+          {/* Orders History Link */}
+          <button
+            onClick={handleOrdersClick}
+            className="w-full flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-gray-700 dark:to-gray-800 hover:from-primary hover:to-secondary hover:text-white transition-all duration-300 group relative shadow-sm border border-amber-100 dark:border-gray-600"
+          >
+            <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-colors shadow-sm">
+              <ShoppingBag className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
+            </div>
+            <span className="text-base font-semibold text-gray-700 dark:text-gray-300 group-hover:text-white">
+              {language === 'ar' ? 'طلباتي' : 'My Orders'}
+            </span>
+            {activeOrdersCount > 0 && (
+              <span className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg animate-gentle-pulse">
+                {activeOrdersCount}
               </span>
             )}
           </button>
@@ -223,5 +333,53 @@ const Sidebar = ({ isOpen, onClose }) => {
     </>
   );
 };
+
+// ================================================================
+// ===== Global Sidebar Control Functions =====
+// ================================================================
+
+export const openSidebar = () => {
+  window.dispatchEvent(new Event('sidebar-open'));
+};
+
+export const closeSidebar = () => {
+  window.dispatchEvent(new Event('sidebar-close'));
+};
+
+export const toggleSidebar = () => {
+  window.dispatchEvent(new Event('sidebar-toggle'));
+};
+
+export const updateSidebarBadges = () => {
+  window.dispatchEvent(new Event('cart-updated'));
+  window.dispatchEvent(new Event('ordersUpdated'));
+};
+
+export const updateSidebarProfile = () => {
+  window.dispatchEvent(new Event('userDataUpdated'));
+};
+
+export const syncSidebarTheme = () => {
+  window.dispatchEvent(new Event('theme-changed'));
+};
+
+export const syncSidebarLanguage = () => {
+  window.dispatchEvent(new Event('language-changed'));
+};
+
+// Expose to window
+if (typeof window !== 'undefined') {
+  window.sidebarControls = {
+    open: openSidebar,
+    close: closeSidebar,
+    toggle: toggleSidebar,
+    updateBadges: updateSidebarBadges,
+    updateProfile: updateSidebarProfile,
+    syncTheme: syncSidebarTheme,
+    syncLanguage: syncSidebarLanguage
+  };
+  
+  console.log('✅ Sidebar controls exposed to window.sidebarControls');
+}
 
 export default Sidebar;

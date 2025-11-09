@@ -73,82 +73,73 @@ export const ProductsProvider = ({ children }) => {
     }
   }, [currentLang]);
 
-  // Discover products with filters
-  const discoverProducts = useCallback(async (filterParams) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const result = await api.discoverProducts(filterParams);
-      
-      if (result?.products) {
-        setFilteredProducts(result.products);
-      }
-    } catch (err) {
-      console.error('Failed to discover products:', err);
-      setError(api.getErrorMessage(err, currentLang));
-    } finally {
-      setLoading(false);
-    }
-  }, [currentLang]);
+  // ✅ REMOVED: discoverProducts - Now using client-side filtering
 
-  // Search products
-  const searchProducts = useCallback(async (query) => {
-    if (!query || query.trim().length === 0) {
-      setFilteredProducts(products);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const data = await api.searchProducts(query);
-      
-      if (data) {
-        setFilteredProducts(data);
-      }
-    } catch (err) {
-      console.error('Search failed:', err);
-      setError(api.getErrorMessage(err, currentLang));
-    } finally {
-      setLoading(false);
-    }
-  }, [products, currentLang]);
+  // ✅ REMOVED: searchProducts - Now using client-side filtering
 
   // Get recommendations
   const getRecommendations = useCallback(async (productId, limit = 5) => {
     try {
-      const response = await fetch(`${API_BASE_URL}?path=/products/recommendations/${productId}&limit=${limit}`);
-      const result = await response.json();
-      return result.data || [];
+      const data = await api.getRecommendations(productId, limit);
+      return data || [];
     } catch (err) {
       console.error('Failed to get recommendations:', err);
       return [];
     }
   }, []);
 
-  // Apply filters
+  // ✅ CLIENT-SIDE FILTERING: Apply all filters locally (instant, no API calls)
   const applyFilters = useCallback((newFilters) => {
     setFilters(newFilters);
     
-    // If search query exists, use search
-    if (newFilters.searchQuery) {
-      searchProducts(newFilters.searchQuery);
-      return;
+    let filtered = [...products];
+    
+    // 1️⃣ Search filter (name, nameEn, tags)
+    if (newFilters.searchQuery && newFilters.searchQuery.trim()) {
+      const query = newFilters.searchQuery.trim().toLowerCase();
+      filtered = filtered.filter(product => {
+        const name = (product.name || '').toLowerCase();
+        const nameEn = (product.nameEn || '').toLowerCase();
+        const tags = (product.tags || '').toLowerCase();
+        const description = (product.description || '').toLowerCase();
+        
+        return name.includes(query) || 
+               nameEn.includes(query) || 
+               tags.includes(query) || 
+               description.includes(query);
+      });
     }
     
-    // Otherwise use discovery with filters
-    const filterParams = {};
-    if (newFilters.category) filterParams.category = newFilters.category;
-    if (newFilters.energyType) filterParams.energyType = newFilters.energyType;
-    if (newFilters.minCalories) filterParams.minCalories = newFilters.minCalories;
-    if (newFilters.maxCalories) filterParams.maxCalories = newFilters.maxCalories;
-    
-    if (Object.keys(filterParams).length > 0) {
-      discoverProducts(filterParams);
-    } else {
-      setFilteredProducts(products);
+    // 2️⃣ Category filter
+    if (newFilters.category) {
+      filtered = filtered.filter(product => 
+        product.category === newFilters.category || 
+        product.categoryEn === newFilters.category
+      );
     }
-  }, [products, searchProducts, discoverProducts]);
+    
+    // 3️⃣ Energy type filter
+    if (newFilters.energyType) {
+      filtered = filtered.filter(product => 
+        product.energy_type === newFilters.energyType
+      );
+    }
+    
+    // 4️⃣ Calorie range filter
+    if (newFilters.minCalories !== null && newFilters.minCalories !== undefined) {
+      filtered = filtered.filter(product => 
+        (product.calories || 0) >= newFilters.minCalories
+      );
+    }
+    if (newFilters.maxCalories !== null && newFilters.maxCalories !== undefined) {
+      filtered = filtered.filter(product => 
+        (product.calories || 0) <= newFilters.maxCalories
+      );
+    }
+    
+    console.log(`🎯 Client-side filtering: ${products.length} → ${filtered.length} products`);
+    setFilteredProducts(filtered);
+  }, [products]);
 
   // Open product modal
   const openProduct = useCallback((product) => {
@@ -284,8 +275,6 @@ export const ProductsProvider = ({ children }) => {
     t, // ✅ تمرير دالة الترجمة
     cart, // ✅ Cart state
     fetchProducts,
-    discoverProducts,
-    searchProducts,
     getRecommendations,
     applyFilters,
     openProduct,

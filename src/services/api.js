@@ -498,7 +498,12 @@ class APIService {
     return result.data;
   }
 
+  /**
+   * ⚠️ DEPRECATED: Backend no longer supports this endpoint
+   * Use getProducts() and filter client-side instead
+   */
   async searchProducts(query) {
+    console.warn('⚠️ searchProducts is deprecated. Backend endpoint removed. Use client-side filtering.');
     const result = await this.request('GET', '/products/search', { q: query });
     return result.data;
   }
@@ -508,11 +513,14 @@ class APIService {
   // ================================================================
 
   /**
+   * ⚠️ DEPRECATED: Backend no longer supports this endpoint
    * Smart Discovery - Filter products by nutrition & energy
+   * Use getProducts() and filter client-side instead
    * @param {Object} filters - { category, energyType, minCalories, maxCalories, minProtein, tags, q, limit, offset }
    * @returns {Promise<{products: Array, total: number, filters: Object}>}
    */
   async discoverProducts(filters = {}) {
+    console.warn('⚠️ discoverProducts is deprecated. Backend endpoint removed. Use client-side filtering.');
     try {
       console.log('🎯 Discovering products with filters:', filters);
       const result = await this.request('GET', '/products/discover', filters);
@@ -559,12 +567,15 @@ class APIService {
   }
 
   /**
+   * ⚠️ DEPRECATED: Backend no longer supports this endpoint
    * Get products by energy type
+   * Use getProducts() and filter client-side instead
    * @param {string} energyType - 'mental', 'physical', or 'balanced'
    * @param {number} limit - Number of products (default: 10)
    * @returns {Promise<Array>} Array of products
    */
   async getProductsByEnergy(energyType, limit = 10) {
+    console.warn('⚠️ getProductsByEnergy is deprecated. Backend endpoint removed. Use client-side filtering.');
     try {
       const result = await this.request('GET', `/products/by-energy/${energyType}`, { limit });
       console.log(`✅ Found ${result.data?.length || 0} ${energyType} energy products`);
@@ -576,11 +587,14 @@ class APIService {
   }
 
   /**
+   * ⚠️ DEPRECATED: Backend no longer supports this endpoint
    * Get products by category
+   * Use getProducts() and filter client-side instead
    * @param {string} category - Category name (Arabic or English)
    * @returns {Promise<Array>} Array of products
    */
   async getProductsByCategory(category) {
+    console.warn('⚠️ getProductsByCategory is deprecated. Backend endpoint removed. Use client-side filtering.');
     try {
       const result = await this.request('GET', `/products/by-category/${encodeURIComponent(category)}`);
       console.log(`✅ Found ${result.data?.length || 0} products in ${category}`);
