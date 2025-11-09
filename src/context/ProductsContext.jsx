@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useGlobal } from './GlobalProvider';
-
-// Import API from parent directory
-const API_BASE_URL = 'https://softcream-api.mahmoud-zahran20025.workers.dev';
+import { api } from '../services/api';
 
 const ProductsContext = createContext();
 
@@ -52,36 +50,28 @@ export const ProductsProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      console.log('🔄 Fetching products from:', `${API_BASE_URL}?path=/products`);
-      const response = await fetch(`${API_BASE_URL}?path=/products`);
+      const data = await api.getProducts();
       
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      const result = await response.json();
-      console.log('📦 API Response:', result);
-      
-      // Validate that result.data is an array
-      if (result.success && Array.isArray(result.data)) {
-        setProducts(result.data);
-        setFilteredProducts(result.data);
-        console.log('✅ Products loaded:', result.data.length);
+      // Validate that data is an array
+      if (Array.isArray(data)) {
+        setProducts(data);
+        setFilteredProducts(data);
+        console.log('✅ Products loaded:', data.length);
       } else {
-        console.warn('⚠️ Invalid API response format:', result);
+        console.warn('⚠️ Invalid API response format:', data);
         setProducts([]);
         setFilteredProducts([]);
-        setError('تنسيق البيانات غير صحيح');
+        setError(api.getErrorMessage(new Error('Invalid data format'), currentLang));
       }
     } catch (err) {
       console.error('❌ Failed to fetch products:', err);
-      setError('فشل تحميل المنتجات. يرجى المحاولة مرة أخرى.');
+      setError(api.getErrorMessage(err, currentLang));
       setProducts([]);
       setFilteredProducts([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentLang]);
 
   // Discover products with filters
   const discoverProducts = useCallback(async (filterParams) => {
@@ -89,26 +79,18 @@ export const ProductsProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      const params = new URLSearchParams();
-      Object.entries(filterParams).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
-          params.append(key, value);
-        }
-      });
+      const result = await api.discoverProducts(filterParams);
       
-      const response = await fetch(`${API_BASE_URL}?path=/products/discover&${params}`);
-      const result = await response.json();
-      
-      if (result.data?.products) {
-        setFilteredProducts(result.data.products);
+      if (result?.products) {
+        setFilteredProducts(result.products);
       }
     } catch (err) {
       console.error('Failed to discover products:', err);
-      setError('فشل البحث عن المنتجات.');
+      setError(api.getErrorMessage(err, currentLang));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentLang]);
 
   // Search products
   const searchProducts = useCallback(async (query) => {
@@ -119,18 +101,18 @@ export const ProductsProvider = ({ children }) => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}?path=/products/search&q=${encodeURIComponent(query)}`);
-      const result = await response.json();
+      const data = await api.searchProducts(query);
       
-      if (result.data) {
-        setFilteredProducts(result.data);
+      if (data) {
+        setFilteredProducts(data);
       }
     } catch (err) {
       console.error('Search failed:', err);
+      setError(api.getErrorMessage(err, currentLang));
     } finally {
       setLoading(false);
     }
-  }, [products]);
+  }, [products, currentLang]);
 
   // Get recommendations
   const getRecommendations = useCallback(async (productId, limit = 5) => {

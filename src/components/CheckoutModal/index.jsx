@@ -4,13 +4,7 @@ import { X, ShoppingCart, Loader2 } from 'lucide-react';
 import DeliveryOptions from './DeliveryOptions';
 import CheckoutForm from './CheckoutForm';
 import OrderSummary from './OrderSummary';
-import { 
-  fetchBranches, 
-  fetchProductDetails, 
-  calculatePrices,
-  validateCoupon,
-  submitOrder 
-} from './checkoutApi';
+import { api } from '../../services/api';
 import { validateCheckoutForm, validateEgyptianPhone } from './validation';
 import { storage } from '../../services/storage';
 
@@ -19,7 +13,7 @@ import { storage } from '../../services/storage';
  * Orchestrates the checkout flow
  */
 const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
-  const { t, currentLang, clearCart } = useProducts();
+  const { t, currentLang, clearCart, productsMap } = useProducts();
 
   // ================================================================
   // State Management
@@ -49,8 +43,9 @@ const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   
-  const [products, setProducts] = useState({});
-  const [productsLoading, setProductsLoading] = useState(true);
+  // Products now come from ProductsContext via productsMap
+  // const [products, setProducts] = useState({});
+  // const [productsLoading, setProductsLoading] = useState(true);
 
   // ================================================================
   // Load Initial Data
@@ -72,26 +67,15 @@ const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
     setErrors({});
     setSubmitError(null);
     
-    // Load branches
+    // Load branches only (products come from ProductsContext)
     setBranchesLoading(true);
     try {
-      const branchesData = await fetchBranches();
+      const branchesData = await api.getBranches();
       setBranches(branchesData);
     } catch (error) {
       console.error('Failed to load branches:', error);
     } finally {
       setBranchesLoading(false);
-    }
-    
-    // Load product details
-    setProductsLoading(true);
-    try {
-      const productsData = await fetchProductDetails(cart);
-      setProducts(productsData);
-    } catch (error) {
-      console.error('Failed to load products:', error);
-    } finally {
-      setProductsLoading(false);
     }
   };
 
@@ -109,18 +93,17 @@ const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
       setPricesError(null);
 
       try {
-        const pricesData = await calculatePrices({
-          items: cart.map(item => ({
+        const pricesData = await api.calculateOrderPrices(
+          cart.map(item => ({
             productId: item.productId || item.id,
             quantity: item.quantity
           })),
+          (couponStatus === 'valid' && formData.couponCode) ? formData.couponCode.trim() : null,
           deliveryMethod,
-          selectedBranch,
+          formData.phone.replace(/\D/g, '') || null,
           userLocation,
-          customerPhone: formData.phone.replace(/\D/g, '') || null,
-          couponCode: (couponStatus === 'valid' && formData.couponCode) ? formData.couponCode.trim() : null,
-          addressInputType: getAddressInputType()
-        });
+          getAddressInputType()
+        );
 
         setPrices(pricesData);
         console.log('✅ Prices calculated:', pricesData);
@@ -154,7 +137,7 @@ const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
 
   const calculateFallbackPrices = () => {
     const subtotal = cart.reduce((sum, item) => {
-      const product = products[item.productId];
+      const product = productsMap[item.productId];
       return sum + ((product?.price || 0) * item.quantity);
     }, 0);
     
@@ -260,11 +243,11 @@ const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
     setCouponStatus(null);
 
     try {
-      const result = await validateCoupon({
+      const result = await api.validateCoupon(
         code,
-        customerPhone: formData.phone.replace(/\D/g, '') || '0000000000',
-        subtotal: prices?.subtotal || calculateFallbackPrices().subtotal
-      });
+        formData.phone.replace(/\D/g, '') || '0000000000',
+        prices?.subtotal || calculateFallbackPrices().subtotal
+      );
 
       if (result.valid) {
         setCouponStatus('valid');
@@ -335,7 +318,7 @@ const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
 
       console.log('📤 Submitting order:', orderData);
       
-      const result = await submitOrder(orderData);
+      const result = await api.submitOrder(orderData);
       
       console.log('✅ Order submitted successfully:', result);
       
@@ -349,7 +332,7 @@ const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
         status: 'confirmed',
         createdAt: new Date().toISOString(),
         items: (serverPrices?.items || cart).map(item => {
-          const product = products[item.productId];
+          const product = productsMap[item.productId];
           return {
             productId: item.productId || item.id,
             name: product ? (currentLang === 'ar' ? product.name : product.nameEn) : `Product ${item.productId}`,
@@ -483,8 +466,8 @@ const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
         {deliveryMethod && (
           <OrderSummary
             cart={cart}
-            products={products}
-            productsLoading={productsLoading}
+            products={productsMap}
+            productsLoading={false}
             prices={prices}
             pricesLoading={pricesLoading}
             pricesError={pricesError}
