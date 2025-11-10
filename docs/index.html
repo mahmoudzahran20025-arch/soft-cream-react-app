@@ -10,7 +10,9 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	<link rel="preconnect" href="https://i.ibb.co" />
-	<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+	
+	<!-- Preload first hero image for LCP optimization -->
+	<link rel="preload" as="image" href="https://i.ibb.co/LzP97qhB/481279444-627854640201713-219907065737357117-n-min.webp" fetchpriority="high" />
 	
 	<!-- ✅ Force Scroll to Top on Page Load -->
 	<script>
@@ -24,13 +26,11 @@
 	<!-- This will be injected by inject-build.js -->
 	<!-- Note: Swiper CSS is now bundled in React app -->
 	
-	<!-- ✅ Google Fonts -->
-	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+	<!-- ✅ Optimized Google Fonts - Cairo only, 3 weights -->
+	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="preload" as="style" onload="this.rel='stylesheet'" />
+	<noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet" /></noscript>
 	
-	<!-- ✅ External Libraries (deferred) -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-	<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0" defer></script>
+	<!-- External Libraries removed - not used in React app -->
 	
 	<!-- ✅ Structured Data (SEO) -->
 	<script type="application/ld+json">
@@ -74,10 +74,10 @@
 		]
 	}
 	</script>
-  <script type="module" crossorigin src="/soft-cream-react-app/assets/index-iu5HWIHy.js"></script>
+  <script type="module" crossorigin src="/soft-cream-react-app/assets/index-DNUMW6e8.js"></script>
   <link rel="modulepreload" crossorigin href="/soft-cream-react-app/assets/react-vendor-nf7bT_Uh.js">
   <link rel="modulepreload" crossorigin href="/soft-cream-react-app/assets/swiper-vendor-y1f9feYf.js">
-  <link rel="stylesheet" crossorigin href="/soft-cream-react-app/assets/index-B9D9lT_K.css">
+  <link rel="stylesheet" crossorigin href="/soft-cream-react-app/assets/index-GVjxEOuI.css">
 </head>
 
 <body class="font-cairo bg-cream-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 overflow-x-hidden transition-colors duration-300">

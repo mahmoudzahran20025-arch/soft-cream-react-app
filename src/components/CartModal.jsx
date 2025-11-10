@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useProducts } from '../context/ProductsContext';
+import { useCart } from '../context/CartContext';
+import { useProductsData } from '../context/ProductsDataContext';
 import { X, ShoppingCart, Calculator, ShieldCheck, Truck, CheckCircle2, Minus, Plus, Trash2, Flame, Droplets, Wheat, Activity, Brain, Zap } from 'lucide-react';
 
 /**
@@ -11,19 +12,22 @@ import { X, ShoppingCart, Calculator, ShieldCheck, Truck, CheckCircle2, Minus, P
  * ✅ Fully integrated with React ecosystem
  */
 const CartModal = ({ isOpen, onClose, onCheckout }) => {
-  // ✅ استخدام Context بدلاً من useState المحلي
+  // ✅ استخدام Contexts المنفصلة
+  const { 
+    cart,
+    updateCartQuantity,
+    removeFromCart,
+    clearCart,
+    getCartCount,
+    getCartTotal
+  } = useCart();
+  
   const { 
     t, 
     currentLang,
-    cart,                    // ✅ من Context
-    productsMap,             // ✅ خريطة المنتجات (Map)
-    loading,                 // ✅ لتجنب race condition
-    updateCartQuantity,      // ✅ من Context
-    removeFromCart,          // ✅ من Context
-    clearCart,               // ✅ من Context
-    getCartCount,            // ✅ من Context
-    getCartTotal             // ✅ من Context
-  } = useProducts();
+    productsMap,
+    loading
+  } = useProductsData();
   
   const [nutritionData, setNutritionData] = useState(null);
   const [nutritionLoading, setNutritionLoading] = useState(false);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useProducts } from '../../context/ProductsContext';
+import { useProductsData } from '../../context/ProductsDataContext';
 import { 
   User, Phone, MapPin, MessageSquare, Tag, 
   Navigation, CheckCircle, XCircle, Loader2, AlertCircle 
@@ -24,7 +24,7 @@ const CheckoutForm = ({
   onApplyCoupon,
   onRemoveCoupon
 }) => {
-  const { t, currentLang } = useProducts();
+  const { t, currentLang } = useProductsData();
 
   return (
     <div className="space-y-4 mb-6">

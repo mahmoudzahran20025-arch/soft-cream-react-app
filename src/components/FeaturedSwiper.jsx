@@ -247,16 +247,6 @@ const FeaturedSwiper = () => {
                 <div className={styles.gradientOverlay} />
               </div>
 
-              {/* Preload for priority images */}
-              {slide.priority === 'high' && (
-                <link
-                  rel="preload"
-                  as="image"
-                  href={slide.image}
-                  fetchpriority="high"
-                />
-              )}
-
               {/* Content Overlay */}
               <div className={styles.slideContent}>
                 <div className={styles.contentInner}>

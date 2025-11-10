@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Plus, Flame, Droplets } from 'lucide-react';
 import EnergyBadge from './EnergyBadge';
-import { useProducts } from '../context/ProductsContext';
+import { useProductsData } from '../context/ProductsDataContext';
 
 /**
  * ProductCard Component
@@ -13,8 +13,8 @@ import { useProducts } from '../context/ProductsContext';
  * - group-hover for smooth energy overlay reveal
  * - e.stopPropagation() separates quick-add from modal open
  */
-const ProductCard = ({ product, onAddToCart }) => {
-  const { openProduct } = useProducts();
+const ProductCard = memo(({ product, onAddToCart }) => {
+  const { openProduct } = useProductsData();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -58,7 +58,10 @@ const ProductCard = ({ product, onAddToCart }) => {
         <img
           src={imageError ? '/placeholder-ice-cream.svg' : product.image}
           alt={product.name}
+          width={300}
+          height={400}
           loading="lazy"
+          decoding="async"
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageError(true)}
           className={`
@@ -163,6 +166,12 @@ const ProductCard = ({ product, onAddToCart }) => {
       </div>
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if product ID changes
+  return prevProps.product.id === nextProps.product.id &&
+         prevProps.onAddToCart === nextProps.onAddToCart;
+});
+
+ProductCard.displayName = 'ProductCard';
 
 export default ProductCard;

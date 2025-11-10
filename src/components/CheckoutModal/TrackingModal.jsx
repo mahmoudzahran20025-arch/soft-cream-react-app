@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useProducts } from '../../context/ProductsContext';
+import { useProductsData } from '../../context/ProductsDataContext';
 import { X, Search, Loader2, Package, Clock, CheckCircle, Truck, MapPin, Phone } from 'lucide-react';
 
 const API_BASE_URL = 'https://softcream-api.mahmoud-zahran20025.workers.dev';
@@ -9,7 +9,7 @@ const API_BASE_URL = 'https://softcream-api.mahmoud-zahran20025.workers.dev';
  * Track order status by order ID
  */
 const TrackingModal = ({ isOpen, onClose, initialOrderId = '' }) => {
-  const { t, currentLang } = useProducts();
+  const { t, currentLang } = useProductsData();
   const [orderId, setOrderId] = useState(initialOrderId);
   const [orderData, setOrderData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);

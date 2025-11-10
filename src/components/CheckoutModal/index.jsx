@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useProducts } from '../../context/ProductsContext';
+import { useCart } from '../../context/CartContext';
+import { useProductsData } from '../../context/ProductsDataContext';
 import { X, ShoppingCart, Loader2 } from 'lucide-react';
 import DeliveryOptions from './DeliveryOptions';
 import CheckoutForm from './CheckoutForm';
@@ -12,8 +13,9 @@ import { storage } from '../../services/storage';
  * CheckoutModal - Main Container
  * Orchestrates the checkout flow
  */
-const CheckoutModal = ({ isOpen, onClose, cart = [], onCheckoutSuccess }) => {
-  const { t, currentLang, clearCart, productsMap } = useProducts();
+const CheckoutModal = ({ isOpen, onClose, onCheckoutSuccess }) => {
+  const { cart, clearCart } = useCart();
+  const { t, currentLang, productsMap } = useProductsData();
 
   // ================================================================
   // State Management

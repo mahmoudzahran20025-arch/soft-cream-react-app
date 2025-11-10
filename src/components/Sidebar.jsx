@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useProducts } from '../context/ProductsContext';
+import { useCart } from '../context/CartContext';
 import { useGlobal } from '../context/GlobalProvider';
 import { storage } from '../services/storage';
 import {
@@ -18,7 +18,7 @@ import {
  */
 
 const Sidebar = ({ isOpen, onClose }) => {
-  const { getCartCount } = useProducts();
+  const { getCartCount } = useCart();
   const { language, toggleLanguage, theme, toggleTheme, t } = useGlobal();
   
   const [userData, setUserData] = useState(null);

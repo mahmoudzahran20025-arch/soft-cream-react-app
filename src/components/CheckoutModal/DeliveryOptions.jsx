@@ -1,5 +1,5 @@
 import React from 'react';
-import { useProducts } from '../../context/ProductsContext';
+import { useProductsData } from '../../context/ProductsDataContext';
 import { Store, Truck, CheckCircle, MapPin, Loader2, AlertCircle } from 'lucide-react';
 
 /**
@@ -15,7 +15,7 @@ const DeliveryOptions = ({
   onDeliveryMethodChange,
   onBranchSelect
 }) => {
-  const { t, currentLang } = useProducts();
+  const { t, currentLang } = useProductsData();
 
   return (
     <div className="mb-6 space-y-3">

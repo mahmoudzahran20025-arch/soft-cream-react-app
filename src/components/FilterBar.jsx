@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Search, Filter, X, Brain, Activity, Zap, IceCream, Apple, Star, Crown, Heart, Grid } from 'lucide-react';
-import { useProducts } from '../context/ProductsContext';
+import { useProductsData } from '../context/ProductsDataContext';
 
 const CATEGORIES = [
   { value: null, label: 'الكل', icon: Grid },
@@ -35,7 +35,7 @@ const CALORIE_RANGES = [
  * - Active filter count badge
  */
 const FilterBar = () => {
-  const { applyFilters, filters } = useProducts();
+  const { applyFilters, filters } = useProductsData();
   const [searchQuery, setSearchQuery] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [localFilters, setLocalFilters] = useState({

@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import EnergyBadge, { EnergyBar } from './EnergyBadge';
 import ProductCard from './ProductCard';
-import { useProducts } from '../context/ProductsContext';
+import { useProductsData } from '../context/ProductsDataContext';
 
 import 'swiper/css';
 import 'swiper/css/free-mode';
@@ -20,7 +20,7 @@ import 'swiper/css/free-mode';
  * - Smooth animations and transitions
  */
 const ProductModal = ({ onAddToCart }) => {
-  const { selectedProduct, closeProduct, getRecommendations } = useProducts();
+  const { selectedProduct, closeProduct, getRecommendations } = useProductsData();
   const [quantity, setQuantity] = useState(1);
   const [recommendations, setRecommendations] = useState([]);
   const [showNutrition, setShowNutrition] = useState(false);

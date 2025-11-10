@@ -1,5 +1,5 @@
 import React from 'react';
-import { useProducts } from '../../context/ProductsContext';
+import { useProductsData } from '../../context/ProductsDataContext';
 import { Receipt, Loader2, AlertCircle, Info } from 'lucide-react';
 
 /**
@@ -15,7 +15,7 @@ const OrderSummary = ({
   pricesError,
   deliveryMethod
 }) => {
-  const { t, currentLang } = useProducts();
+  const { t, currentLang } = useProductsData();
 
   return (
     <div className="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-5 mb-6 border-2 border-pink-100 dark:border-gray-600 shadow-sm">

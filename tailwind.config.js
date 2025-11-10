@@ -75,9 +75,8 @@ export default {
       // ================================================================
       fontFamily: {
         cairo: ['Cairo', 'sans-serif'],
-        tajawal: ['Tajawal', 'sans-serif'],
         arabic: ['Cairo', 'sans-serif'],
-        english: ['Poppins', 'sans-serif'],
+        english: ['Cairo', 'sans-serif'], // Using Cairo for consistency
       },
       
       // ================================================================

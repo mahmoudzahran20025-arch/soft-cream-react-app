@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useProducts } from '../../context/ProductsContext';
+import { useProductsData } from '../../context/ProductsDataContext';
 import { X, Package, Clock, CheckCircle, XCircle, Truck, MapPin } from 'lucide-react';
 import { storage } from '../../services/storage';
 
@@ -8,7 +8,7 @@ import { storage } from '../../services/storage';
  * Displays user's order history from localStorage
  */
 const MyOrdersModal = ({ isOpen, onClose, onTrackOrder }) => {
-  const { t, currentLang } = useProducts();
+  const { t, currentLang } = useProductsData();
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {

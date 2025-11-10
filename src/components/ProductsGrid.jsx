@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Pagination } from 'swiper/modules';
 import ProductCard from './ProductCard';
-import { useProducts } from '../context/ProductsContext';
+import { useProductsData } from '../context/ProductsDataContext';
 import styles from './ProductsGrid.module.css';
 
 // Swiper styles
@@ -20,7 +20,7 @@ import 'swiper/css/pagination';
  * - Desktop: 200px cards = more visible, better use of space
  */
 const ProductsGrid = ({ onAddToCart }) => {
-  const { filteredProducts, loading, error } = useProducts();
+  const { filteredProducts, loading, error } = useProductsData();
 
   // Group products by category (memoized for performance)
   const groupedProducts = useMemo(() => {
